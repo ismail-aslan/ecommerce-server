@@ -5,6 +5,7 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const api = require("./api");
+const AppError = require('./utils/appError');
 const globalErrorHandler = require("./middleware/globalErrorHandler");
 const { sampledb } = require("./models/index");
 
@@ -33,7 +34,7 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/v1", api);
 
 app.all('*', (req, res, next) => {
-    next(new Error(`Can't find ${req.originalUrl} on this server!`));
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`,404));
 });
 
 // global error handler

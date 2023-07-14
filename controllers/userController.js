@@ -1,4 +1,5 @@
 const catchAsync = require('./../utils/catchAsync');
+const AppError = require('./../utils/appError');
 
 
 exports.getUsers = catchAsync(async (req, res, next) => {
@@ -17,7 +18,7 @@ exports.getUserById = catchAsync(async (req, res, next) => {
 
 exports.createUser = catchAsync(async (req, res, next) => {
     // if mail is already registered
-    return next(new Error('This email has alredy been taken!'))
+    return next(new AppError('This email has alredy been taken!',400))
     // await User.create(req.user.id, { active: false });
     // res.status(204).send({
     //     status: 'success',
