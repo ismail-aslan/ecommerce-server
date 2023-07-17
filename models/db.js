@@ -1,11 +1,18 @@
-const Product = require("./product");
-const Category = require("./category");
-const User = require("./user");
-const Post = require("./post");
+const Sequelize = require("sequelize");
 
-// table relationships
-Product.belongsToMany(Category, { through: "ProductCategory" });
-Category.belongsToMany(Product, { through: "ProductCategory" });
+// creating the auth url
+const url = process.env.DB_URL;
+console.log("url", url);
+// creating the db instance
+const ecommercedb = new Sequelize(url, {
+  logging: console.log,
+  dialect: "postgres",
+  define: {
+    underscored: true,
+    freezeTableName: true,
+    timestamps: true,
+  },
+});
 
-User.hasMany(Post);
-Post.belongsTo(User);
+module.exports = { ecommercedb };
+require("./index.js");

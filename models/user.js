@@ -1,7 +1,7 @@
 "use strict";
 
 const Sequelize = require("sequelize");
-const { ecommercedb } = require("./index");
+const { ecommercedb } = require("./db");
 
 module.exports = ecommercedb.define(
   "user",
