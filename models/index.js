@@ -5,7 +5,7 @@ const url = process.env.DB_URL;
 
 // creating the db instance
 const ecommercedb = new Sequelize(url, {
-  logging: false,
+  logging: console.log,
   dialect: "postgres",
   define: {
     underscored: true,
@@ -15,15 +15,3 @@ const ecommercedb = new Sequelize(url, {
 });
 
 module.exports = { ecommercedb };
-
-const Product = require("./product");
-const Category = require("./category");
-const User = require("./user");
-const Post = require("./post");
-
-// table relationships
-Product.belongsToMany(Category, { through: "ProductCategory" });
-Category.belongsToMany(Product, { through: "ProductCategory" });
-
-User.hasMany(Post);
-Post.belongsTo(User);
