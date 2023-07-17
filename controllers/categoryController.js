@@ -10,6 +10,18 @@ exports.getCategorys = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getCategoryById = catchAsync(async (req, res, next) => {
+  console.log(req.params);
+  const { id } = req.params;
+  const categories = await category.findOne({
+    where: { id },
+  });
+  res.status(200).send({
+    status: "success",
+    data: categories,
+  });
+});
+
 exports.createCategory = catchAsync(async (req, res, next) => {
   console.log("regqbody", req.body);
   const { name } = req.body;
