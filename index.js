@@ -5,7 +5,7 @@ const { ecommercedb } = require("./models/db");
 
 // connect and sync db
 ecommercedb
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => console.log("synced ecommercedb successfully!"))
   .catch((err) => console.log("unable to sync ecommercedb!", err));
 
