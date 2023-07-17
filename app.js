@@ -9,18 +9,18 @@ const AppError = require("./utils/appError");
 const globalErrorHandler = require("./middleware/globalErrorHandler");
 const swaggerUI = require("swagger-ui-express");
 const docs = require("./docs");
-const { sampledb } = require("./models/index");
+const { ecommercedb } = require("./models/index");
 
 // connect and sync db
-sampledb
-  .sync({ force: false })
-  .then(() => console.log("synced sampledb successfully!"))
-  .catch((err) => console.log("unable to sync sampledb!", err));
+ecommercedb
+  .sync({ force: true })
+  .then(() => console.log("synced ecommercedb successfully!"))
+  .catch((err) => console.log("unable to sync ecommercedb!", err));
 
-sampledb
+ecommercedb
   .authenticate()
-  .then(() => console.log("connected sampledb successfully!"))
-  .catch((err) => console.log("unable to connect sampledb!", err));
+  .then(() => console.log("connected ecommercedb successfully!"))
+  .catch((err) => console.log("unable to connect ecommercedb!", err));
 
 // to parse the incoming requests with JSON payloads
 app.use(express.json());

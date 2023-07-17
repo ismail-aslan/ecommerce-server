@@ -4,19 +4,11 @@ const Sequelize = require("sequelize");
 const { ecommercedb } = require("./index");
 
 module.exports = ecommercedb.define(
-  "post",
+  "category",
   {
-    title: {
-      type: Sequelize.CHAR(150),
-      allowNull: false,
-    },
-    content: {
-      type: Sequelize.CHAR(150),
-      allowNull: false,
-    },
-    image: {
+    name: {
       type: Sequelize.TEXT,
-      allowNull: true,
+      allowNull: false,
     },
   },
   {
