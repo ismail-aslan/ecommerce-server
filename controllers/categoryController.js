@@ -22,7 +22,6 @@ exports.getCategoryById = catchAsync(async (req, res, next) => {
 });
 
 exports.createCategory = catchAsync(async (req, res, next) => {
-  console.log("regqbody", req.body);
   const { name } = req.body;
   if (!name) {
     return next(new AppError("Missing data", 400));
@@ -45,8 +44,24 @@ exports.updateCategoryById = catchAsync(async (req, res, next) => {
       plain: true,
     }
   );
+
+  if (categories[0] === 0) {
+    return next(new AppError("Missing or wrong parameters", 400));
+  }
   res.status(200).send({
     status: "success",
     data: categories,
+  });
+});
+
+exports.deleteCategoryById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  await category.destroy({
+    where: { id },
+  });
+
+  res.status(204).send({
+    status: "success",
   });
 });
