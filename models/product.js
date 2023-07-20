@@ -25,8 +25,14 @@ module.exports = ecommercedb.define(
     },
     images: {
       type: Sequelize.JSONB,
-      allowNull: false,
+      allowNull: true,
       default: [],
+      get() {
+        const rawValue = this.getDataValue("images");
+        return (
+          rawValue?.map((imageName) => process.env.BASE_URL + imageName) || []
+        );
+      },
     },
     description: {
       type: Sequelize.TEXT,
