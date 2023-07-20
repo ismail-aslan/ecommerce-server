@@ -5,6 +5,7 @@ const category = require("../models/category");
 const multiUpload = require("../utils/multiUpload");
 const removeFile = require("../utils/removeFile");
 const multer = require("multer");
+const { Sequelize } = require("sequelize");
 
 exports.getProducts = catchAsync(async (req, res, next) => {
   const products = await product.findAll({
@@ -41,8 +42,15 @@ exports.getProductById = catchAsync(async (req, res, next) => {
 });
 
 exports.createProduct = catchAsync(async (req, res, next) => {
-  const { name, price, showDiscount = false, description } = req.body;
-  if (!name) {
+  const {
+    title,
+    price,
+    showDiscount = false,
+    description,
+    unitCount = 0,
+    isListed = false,
+  } = req.body;
+  if (!title) {
     return next(new AppError("Missing data", 400));
   }
   multiUpload(req, res, async function (err) {
@@ -61,11 +69,13 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     const images = req.files?.map((f) => f.filename);
 
     const result = await product.create({
-      name,
+      title,
       price,
       showDiscount,
       images: images,
       description,
+      unitCount,
+      isListed,
     });
 
     res.status(201).send({
@@ -76,43 +86,59 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 });
 
 exports.updateProductById = catchAsync(async (req, res, next) => {
-  const { id, name, price, showDiscount, description, categoryIds } = req.body;
+  const {
+    id,
+    title,
+    price,
+    showDiscount,
+    description,
+    unitCount,
+    isListed,
+    categoryIds,
+  } = req.body;
 
   if (
-    !name ||
-    [price, showDiscount, description].every((el) => el == undefined)
+    !title ||
+    [title, price, showDiscount, description, unitCount, isListed].every(
+      (el) => el == undefined
+    )
   ) {
     return next(new AppError("Missing or wrong parameters", 400));
   }
 
   const selectedProduct = await product.findOne({
     where: { id },
-    include: {
-      model: category,
-      attributes: ["id", "name"],
-      through: {
-        attributes: [],
-      },
-    },
   });
 
-  selectedProduct.name = name;
+  if (!selectedProduct) {
+    return next(new AppError("There isn't any product with that id.", 400));
+  }
+
+  selectedProduct.title = title;
+  if (price !== undefined) {
+    selectedProduct.prevPrice = selectedProduct.price;
+  }
   selectedProduct.price = price;
   selectedProduct.showDiscount = showDiscount || false;
   selectedProduct.description = description;
+  selectedProduct.unitCount = unitCount || 0;
+  selectedProduct.isListed = isListed || false;
 
-  await selectedProduct.setCategories([]);
+  let selectedCategories = [];
 
   if (categoryIds && categoryIds.length > 0) {
-    const selectedCategories = await category.findAll({
+    selectedCategories = await category.findAll({
+      attributes: ["id", "name"],
       where: {
         id: categoryIds,
       },
     });
-
-    await selectedProduct.setCategories(selectedCategories);
   }
+
+  await selectedProduct.setCategories(selectedCategories);
+
   await selectedProduct.save();
+
   const result = await product.findOne({
     where: { id },
     include: {

@@ -6,7 +6,7 @@ const { ecommercedb } = require("./db");
 module.exports = ecommercedb.define(
   "product",
   {
-    name: {
+    title: {
       type: Sequelize.TEXT,
       allowNull: false,
     },
@@ -18,15 +18,29 @@ module.exports = ecommercedb.define(
       type: Sequelize.FLOAT,
       allowNull: true,
     },
+    unitCount: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
+    soldCount: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    isListed: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
     showDiscount: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
-      default: false,
+      defaultValue: false,
     },
     images: {
       type: Sequelize.JSONB,
       allowNull: true,
-      default: [],
+      defaultValue: [],
       get() {
         const rawValue = this.getDataValue("images");
         return (
