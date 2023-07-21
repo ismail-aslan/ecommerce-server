@@ -5,7 +5,6 @@ const category = require("../models/category");
 const multiUpload = require("../utils/multiUpload");
 const removeFile = require("../utils/removeFile");
 const multer = require("multer");
-const { Sequelize } = require("sequelize");
 
 exports.getProducts = catchAsync(async (req, res, next) => {
   const products = await product.findAll({
