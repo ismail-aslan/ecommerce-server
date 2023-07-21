@@ -96,12 +96,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
     categoryIds,
   } = req.body;
 
-  if (
-    !title ||
-    [title, price, showDiscount, description, unitCount, isListed].every(
-      (el) => el == undefined
-    )
-  ) {
+  if (id === undefined) {
     return next(new AppError("Missing or wrong parameters", 400));
   }
 
@@ -112,16 +107,30 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
   if (!selectedProduct) {
     return next(new AppError("There isn't any product with that id.", 400));
   }
-
-  selectedProduct.title = title;
-  if (price !== undefined) {
-    selectedProduct.prevPrice = selectedProduct.price;
+  if (title) {
+    selectedProduct.title = title;
   }
-  selectedProduct.price = price;
-  selectedProduct.showDiscount = showDiscount || false;
-  selectedProduct.description = description;
-  selectedProduct.unitCount = unitCount || 0;
-  selectedProduct.isListed = isListed || false;
+  if (price !== undefined) {
+    if (price !== selectedProduct.price) {
+      selectedProduct.prevPrice = selectedProduct.price;
+    }
+    selectedProduct.price = price;
+  }
+  if (showDiscount !== undefined) {
+    selectedProduct.showDiscount = showDiscount || false;
+  }
+  if (showDiscount !== undefined) {
+    selectedProduct.showDiscount = showDiscount || false;
+  }
+  if (description !== undefined) {
+    selectedProduct.description = description;
+  }
+  if (unitCount !== undefined) {
+    selectedProduct.unitCount = unitCount || 0;
+  }
+  if (isListed !== undefined) {
+    selectedProduct.unitCount = isListed || false;
+  }
 
   let selectedCategories = [];
 
@@ -257,6 +266,72 @@ exports.deleteProductById = catchAsync(async (req, res, next) => {
   }
 
   await selectedProduct.destroy();
+
+  res.status(204).send({
+    status: "success",
+  });
+});
+
+exports.listProductById = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+
+  const selectedProduct = await product.findOne({
+    where: { id },
+    include: {
+      model: category,
+      attributes: ["id", "name"],
+      through: {
+        attributes: [],
+      },
+    },
+  });
+
+  const warnings = [];
+
+  if (!selectedProduct.price) {
+    return next(new AppError("Price can not be null or zero.", 400));
+  }
+
+  if (!selectedProduct.prevPrice && selectedProduct.showDiscount) {
+    return next(
+      new AppError(
+        "Previous price can not be null or zero while showing discount.",
+        400
+      )
+    );
+  }
+
+  if (selectedProduct.unitCount === null) {
+    return next(
+      new AppError("Product unit count is needed to list a product", 400)
+    );
+  }
+  selectedProduct.isListed = true;
+  selectedProduct.save();
+  if (!selectedProduct.description) {
+    warnings.push("No product description.");
+  }
+
+  if (selectedProduct.images.length === 0) {
+    warnings.push("No product image uploaded.");
+  }
+
+  res.status(200).send({
+    status: "success",
+    data: warnings,
+  });
+});
+exports.delistProductById = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+
+  await product.update(
+    {
+      isListed: false,
+    },
+    {
+      where: { id },
+    }
+  );
 
   res.status(204).send({
     status: "success",

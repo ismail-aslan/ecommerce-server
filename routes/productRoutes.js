@@ -8,6 +8,8 @@ router
   .post("/", productController.createProduct)
   .patch("/", productController.updateProductById)
   .patch("/:id/images", productController.updateProductImageById)
-  .delete("/:id", productController.deleteProductById);
+  .delete("/:id", productController.deleteProductById)
+  .post("/list", productController.listProductById)
+  .post("/delist", productController.delistProductById);
 
 module.exports = router;
