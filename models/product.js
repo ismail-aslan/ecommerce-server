@@ -44,7 +44,9 @@ module.exports = ecommercedb.define(
       get() {
         const rawValue = this.getDataValue("images");
         return (
-          rawValue?.map((imageName) => process.env.BASE_URL + imageName) || []
+          rawValue?.map(
+            (imageName) => process.env.BASE_URL + "uploads/" + imageName
+          ) || []
         );
       },
     },
