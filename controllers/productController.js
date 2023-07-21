@@ -1,15 +1,14 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-const product = require("../models/product");
-const category = require("../models/category");
 const multiUpload = require("../utils/multiUpload");
 const removeFile = require("../utils/removeFile");
 const multer = require("multer");
+const { Product, Category } = require("../models");
 
 exports.getProducts = catchAsync(async (req, res, next) => {
-  const products = await product.findAll({
+  const products = await Product.findAll({
     include: {
-      model: category,
+      model: Category,
       attributes: ["id", "name"],
       through: {
         attributes: [],
@@ -24,10 +23,10 @@ exports.getProducts = catchAsync(async (req, res, next) => {
 
 exports.getProductById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const products = await product.findOne({
+  const products = await Product.findOne({
     where: { id },
     include: {
-      model: category,
+      model: Category,
       attributes: ["id", "name"],
       through: {
         attributes: [],
@@ -67,7 +66,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 
     const images = req.files?.map((f) => f.filename);
 
-    const result = await product.create({
+    const result = await Product.create({
       title,
       price,
       showDiscount,
@@ -100,7 +99,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
     return next(new AppError("Missing or wrong parameters", 400));
   }
 
-  const selectedProduct = await product.findOne({
+  const selectedProduct = await Product.findOne({
     where: { id },
   });
 
@@ -135,7 +134,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
   let selectedCategories = [];
 
   if (categoryIds && categoryIds.length > 0) {
-    selectedCategories = await category.findAll({
+    selectedCategories = await Category.findAll({
       attributes: ["id", "name"],
       where: {
         id: categoryIds,
@@ -147,10 +146,10 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
 
   await selectedProduct.save();
 
-  const result = await product.findOne({
+  const result = await Product.findOne({
     where: { id },
     include: {
-      model: category,
+      model: Category,
       attributes: ["id", "name"],
       through: {
         attributes: [],
@@ -171,10 +170,10 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
     return next(new AppError("Missing or wrong parameters", 400));
   }
 
-  const selectedProduct = await product.findOne({
+  const selectedProduct = await Product.findOne({
     where: { id },
     include: {
-      model: category,
+      model: Category,
       attributes: ["id", "name"],
       through: {
         attributes: [],
@@ -234,10 +233,10 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
 
     await selectedProduct.save();
 
-    const result = await product.findOne({
+    const result = await Product.findOne({
       where: { id },
       include: {
-        model: category,
+        model: Category,
         attributes: ["id", "name"],
         through: {
           attributes: [],
@@ -255,7 +254,7 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
 exports.deleteProductById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const selectedProduct = await product.findOne({
+  const selectedProduct = await Product.findOne({
     where: { id },
   });
 
@@ -275,10 +274,10 @@ exports.deleteProductById = catchAsync(async (req, res, next) => {
 exports.listProductById = catchAsync(async (req, res, next) => {
   const { id } = req.body;
 
-  const selectedProduct = await product.findOne({
+  const selectedProduct = await Product.findOne({
     where: { id },
     include: {
-      model: category,
+      model: Category,
       attributes: ["id", "name"],
       through: {
         attributes: [],
@@ -324,7 +323,7 @@ exports.listProductById = catchAsync(async (req, res, next) => {
 exports.delistProductById = catchAsync(async (req, res, next) => {
   const { id } = req.body;
 
-  await product.update(
+  await Product.update(
     {
       isListed: false,
     },
