@@ -7,20 +7,43 @@ module.exports = ecommercedb.define(
   "user",
   {
     name: {
-      type: Sequelize.CHAR(150),
+      type: Sequelize.TEXT,
       allowNull: false,
     },
-    sur_name: {
-      type: Sequelize.CHAR(150),
-      allowNull: false,
+    surname: {
+      type: Sequelize.TEXT,
+      allowNull: true,
     },
     email: {
-      type: Sequelize.CHAR(150),
+      type: Sequelize.TEXT,
       allowNull: false,
+      unique: true,
     },
     password: {
-      type: Sequelize.CHAR(150),
+      type: Sequelize.TEXT,
       allowNull: false,
+    },
+    userStatus: {
+      type: Sequelize.DataTypes.ENUM(["pending", "active", "disabled"]),
+      allowNull: false,
+      defaultValue: "pending",
+    },
+    userRole: {
+      type: Sequelize.DataTypes.ENUM(["standard", "employee", "admin"]),
+      allowNull: false,
+      defaultValue: "standard",
+    },
+    token: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    verificationCode: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+    },
+    verificationDate: {
+      type: Sequelize.DATE,
+      allowNull: true,
     },
   },
   {
