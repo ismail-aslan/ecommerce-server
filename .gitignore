@@ -2,3 +2,4 @@
 .config.env
 .env
 /public/uploads
+.DS_STORE
