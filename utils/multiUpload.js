@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require("path");
+const AppError = require("./appError");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "../public/uploads/"));
@@ -19,15 +20,22 @@ module.exports = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 1MB
   fileFilter: (req, file, cb) => {
-    if (
-      file.mimetype == "image/png" ||
-      file.mimetype == "image/jpg" ||
-      file.mimetype == "image/jpeg"
-    ) {
+    const allowedFileTypes = ["image/png", "image/jpg", "image/jpeg"];
+    if (req.params.id === undefined) {
+      cb(null, false);
+      const err = new AppError("Id parameter is requiered!", 400);
+      err.name = "ExtensionError";
+      return cb(err);
+    } else if (allowedFileTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
       cb(null, false);
-      const err = new Error("Only .png, .jpg and .jpeg format allowed!");
+      const err = new AppError(
+        `Only ${allowedFileTypes
+          .map((el) => "." + el.split("image/")[0])
+          .join(" or ")} format allowed!`,
+        400
+      );
       err.name = "ExtensionError";
       return cb(err);
     }

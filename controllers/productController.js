@@ -4,9 +4,11 @@ const multiUpload = require("../utils/multiUpload");
 const removeFile = require("../utils/removeFile");
 const multer = require("multer");
 const { Product, Category } = require("../models");
+const checkType = require("../utils/checkType");
 
 exports.getProducts = catchAsync(async (req, res, next) => {
   const products = await Product.findAll({
+    order: [["id", "DESC"]],
     include: {
       model: Category,
       attributes: ["id", "name"],
@@ -23,6 +25,7 @@ exports.getProducts = catchAsync(async (req, res, next) => {
 
 exports.getProductById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
+  checkType(id, "number", false);
   const products = await Product.findOne({
     where: { id },
     include: {
@@ -47,39 +50,55 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     description,
     unitCount = 0,
     isListed = false,
+    categoryIds,
   } = req.body;
-  if (!title) {
-    return next(new AppError("Missing data", 400));
+
+  checkType(title, "string", false);
+  checkType(price, "number", true);
+  checkType(showDiscount, "boolean", true);
+  checkType(description, "string", true);
+  checkType(unitCount, "number", true);
+  checkType(isListed, "boolean", true);
+  checkType(categoryIds, "array", true);
+
+  const product = await Product.create({
+    title,
+    price,
+    showDiscount,
+    description,
+    unitCount,
+    isListed,
+  });
+
+  let selectedCategories = [];
+
+  if (categoryIds && categoryIds.length > 0) {
+    selectedCategories = await Category.findAll({
+      attributes: ["id", "name"],
+      where: {
+        id: categoryIds,
+      },
+    });
   }
-  multiUpload(req, res, async function (err) {
-    if (err instanceof multer.MulterError) {
-      // A Multer error occurred when uploading.
-      return next(new AppError(err.message, 500));
-    } else if (err) {
-      // An unknown error occurred when uploading.
-      if (err.name == "ExtensionError") {
-        return next(new AppError(err.message, 413));
-      } else {
-        return next(new AppError(err.message, 500));
-      }
-    }
 
-    const images = req.files?.map((f) => f.filename);
+  await product.setCategories(selectedCategories);
 
-    const result = await Product.create({
-      title,
-      price,
-      showDiscount,
-      images: images,
-      description,
-      unitCount,
-      isListed,
-    });
+  await product.save();
 
-    res.status(201).send({
-      status: "success",
-      data: result,
-    });
+  const result = await Product.findOne({
+    where: { id: product.id },
+    include: {
+      model: Category,
+      attributes: ["id", "name"],
+      through: {
+        attributes: [],
+      },
+    },
+  });
+
+  res.status(201).send({
+    status: "success",
+    data: result,
   });
 });
 
@@ -94,10 +113,14 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
     isListed,
     categoryIds,
   } = req.body;
-
-  if (id === undefined) {
-    return next(new AppError("Missing or wrong parameters", 400));
-  }
+  checkType(id, "number", false);
+  checkType(title, "string", false);
+  checkType(price, "number", true);
+  checkType(showDiscount, "boolean", true);
+  checkType(description, "string", true);
+  checkType(unitCount, "number", true);
+  checkType(isListed, "boolean", true);
+  checkType(categoryIds, "array", true);
 
   const selectedProduct = await Product.findOne({
     where: { id },
@@ -165,10 +188,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
 
 exports.updateProductImageById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-
-  if (id === undefined) {
-    return next(new AppError("Missing or wrong parameters", 400));
-  }
+  checkType(id, "number", false);
 
   const selectedProduct = await Product.findOne({
     where: { id },
@@ -210,6 +230,7 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
       const fileName = imageLink.split("/uploads/")[1];
       if (
         fileName &&
+        fileName.startsWith(process.env.BASE_URL) &&
         (fileName.endsWith("png") ||
           fileName.endsWith("jpg") ||
           fileName.endsWith("jpeg")) &&
@@ -253,10 +274,15 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
 
 exports.deleteProductById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
+  checkType(id, "number", false);
 
   const selectedProduct = await Product.findOne({
     where: { id },
   });
+
+  if (!selectedProduct) {
+    return next(new AppError("There isn't any product with that id.", 400));
+  }
 
   if (selectedProduct.images.length > 0) {
     selectedProduct.images.forEach((imgLink) =>
@@ -273,6 +299,7 @@ exports.deleteProductById = catchAsync(async (req, res, next) => {
 
 exports.listProductById = catchAsync(async (req, res, next) => {
   const { id } = req.body;
+  checkType(id, "number", false);
 
   const selectedProduct = await Product.findOne({
     where: { id },
@@ -322,6 +349,7 @@ exports.listProductById = catchAsync(async (req, res, next) => {
 });
 exports.delistProductById = catchAsync(async (req, res, next) => {
   const { id } = req.body;
+  checkType(id, "number", false);
 
   await Product.update(
     {
