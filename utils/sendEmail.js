@@ -31,12 +31,9 @@ const sendEmail = async (userId, type, data, option, customEmail) => {
       : option.email;
 
     const password = !option
-      ? process.env.NOREPLY_EMAIL_PASSWORD
+      ? process.env.NOREPLY_EMAIL_PASSWORD //for gmail get an app password from security settings
       : option.password;
-    console.log({
-      user: emailToSendFrom,
-      pass: password,
-    });
+
     // configure nodemailer
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
