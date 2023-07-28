@@ -38,7 +38,7 @@ module.exports = ecommercedb.define(
       allowNull: true,
     },
     verificationCode: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.TEXT,
       allowNull: true,
     },
     verificationDate: {
