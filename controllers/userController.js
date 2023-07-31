@@ -5,6 +5,7 @@ const { User } = require("../models");
 const createToken = require("../utils/createToken");
 const { sendEmail } = require("../utils/sendEmail");
 const checkType = require("../utils/checkType");
+const verifyToken = require("../utils/verifyToken");
 
 exports.createUser = catchAsync(async (req, res, next) => {
   const { name, surname, email, password } = req.body;
@@ -32,15 +33,31 @@ exports.createUser = catchAsync(async (req, res, next) => {
       password: bcrypt.hashSync(password, 8),
       email,
     });
-    const token = createToken({ email });
+    const verificationCode = createToken({ email });
     const emailData = {
-      verificationUrl: `${process.env.BASE_URL}api/users/${token}`,
+      verificationUrl: `${process.env.BASE_URL}api/v1/users/${verificationCode}`,
     };
-    newUser.verificationCode = token;
+    newUser.verificationCode = verificationCode;
+    console.log({
+      email: newUser.email,
+      rol: newUser.userRol,
+    });
+    const token = createToken(
+      {
+        email: newUser.email,
+        rol: "standard",
+      },
+      {
+        expiresIn: "1d",
+      }
+    );
+    newUser.token = token;
     try {
       await sendEmail(newUser.id, "activasion", emailData);
+      newUser.save();
     } catch (error) {
-      console.log("error", error);
+      newUser.destroy();
+      return next(new AppError(error.message, 400));
     }
 
     res.status(200).send({
@@ -49,10 +66,48 @@ exports.createUser = catchAsync(async (req, res, next) => {
         name: newUser.name,
         surname: newUser.surname,
         email: newUser.email,
+        userStatus: "pending",
+        token,
       },
     });
   } else {
     return next(new AppError("This email has already been registered.", 400));
+  }
+});
+
+exports.verifyUser = catchAsync(async (req, res, next) => {
+  const { verificationCode } = req.params;
+  checkType(verificationCode, "string", false);
+  try {
+    const verification = verifyToken(verificationCode);
+    const { email } = verification;
+    const user = await User.findOne({
+      where: {
+        verificationCode,
+        email,
+      },
+    });
+    if (user === null) {
+      res.redirect(`https://ecommerce.ismailaslan.me/?verified=false`);
+    }
+    user.verificationCode = null;
+    user.verificationDate = Date.now();
+    user.userStatus = "active";
+    // const token = createToken(
+    //   {
+    //     email: user.email,
+    //     rol: user.userRol,
+    //   },
+    //   {
+    //     expiresIn: "1d",
+    //   }
+    // );
+
+    // user.token = token;
+    await user.save();
+    res.redirect(`https://ecommerce.ismailaslan.me/?verified=true`);
+  } catch (error) {
+    res.redirect(`https://ecommerce.ismailaslan.me/?verified=false`);
   }
 });
 
