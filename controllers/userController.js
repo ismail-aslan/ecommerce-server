@@ -9,12 +9,7 @@ const verifyToken = require("../utils/verifyToken");
 
 exports.createUser = catchAsync(async (req, res, next) => {
   const { name, surname, email, password } = req.body;
-  console.log({
-    name,
-    surname,
-    email,
-    password,
-  });
+
   checkType(name, "string", false);
   checkType(surname, "string", false);
   checkType(email, "string", false);
@@ -38,14 +33,11 @@ exports.createUser = catchAsync(async (req, res, next) => {
       verificationUrl: `${process.env.BASE_URL}api/v1/users/${verificationCode}`,
     };
     newUser.verificationCode = verificationCode;
-    console.log({
-      email: newUser.email,
-      rol: newUser.userRol,
-    });
+
     const token = createToken(
       {
         email: newUser.email,
-        rol: "standard",
+        role: "standard",
       },
       {
         expiresIn: "1d",
@@ -66,7 +58,8 @@ exports.createUser = catchAsync(async (req, res, next) => {
         name: newUser.name,
         surname: newUser.surname,
         email: newUser.email,
-        userStatus: "pending",
+        status: "pending",
+        role: "standard",
         token,
       },
     });
@@ -96,7 +89,7 @@ exports.verifyUser = catchAsync(async (req, res, next) => {
     // const token = createToken(
     //   {
     //     email: user.email,
-    //     rol: user.userRol,
+    //     role: user.userRole,
     //   },
     //   {
     //     expiresIn: "1d",
@@ -109,6 +102,54 @@ exports.verifyUser = catchAsync(async (req, res, next) => {
   } catch (error) {
     res.redirect(`https://ecommerce.ismailaslan.me/?verified=false`);
   }
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  checkType(email, "string", false);
+  checkType(password, "string", false);
+
+  const user = await User.findOne({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!user) {
+    return next(
+      new AppError("We cannot find an account with that e-mail address.", 400)
+    );
+  }
+
+  const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+  if (!isPasswordCorrect) {
+    return next(new AppError("Invalid username or password", 400));
+  }
+
+  const token = createToken(
+    {
+      email: user.email,
+      role: user.userRole,
+    },
+    {
+      expiresIn: "1d",
+    }
+  );
+
+  user.token = token;
+  user.save();
+  res.status(200).send({
+    status: "success",
+    data: {
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
+      status: user.userStatus,
+      role: user.userRole,
+      token,
+    },
+  });
 });
 
 exports.deleteUserById = catchAsync(async (req, res, next) => {
