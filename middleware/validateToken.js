@@ -4,7 +4,7 @@ const verifyToken = require("../utils/verifyToken");
 
 module.exports = async (req, res, next) => {
   const { authorization } = req.headers;
-  const token = authorization.split(" ")[1];
+  const token = authorization?.split(" ")[1];
   if (!token) {
     return next(new AppError("Missing token", 401));
   }
@@ -26,6 +26,9 @@ module.exports = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    if (error.message === "jwt expired") {
+      return next(new AppError("Token expired", 401));
+    }
     return next(new AppError("Invalid token", 401));
   }
 };
