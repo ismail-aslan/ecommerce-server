@@ -21,7 +21,7 @@ module.exports = async (req, res, next) => {
       return next(new AppError("Invalid token", 401));
     }
     if (user.userStatus === "disabled") {
-      return next(new AppError("Unauthorized user", 401));
+      return next(new AppError("Forbidden", 403));
     }
     req.user = user;
     next();

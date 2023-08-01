@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
     );
   }
   if (user.userStatus === "pending") {
-    new AppError("User email is not verified", 401);
+    return next(new AppError("User email is not verified", 401));
   }
   next();
 };
