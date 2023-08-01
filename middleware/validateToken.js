@@ -20,6 +20,9 @@ module.exports = async (req, res, next) => {
     if (user === null) {
       return next(new AppError("Invalid token", 401));
     }
+    if (user.userStatus === "disabled") {
+      return next(new AppError("Unauthorized user", 401));
+    }
     req.user = user;
     next();
   } catch (error) {
