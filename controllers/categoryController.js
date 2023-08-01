@@ -2,7 +2,7 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const category = require("../models/category");
 
-exports.getCategorys = catchAsync(async (req, res, next) => {
+exports.getCategories = catchAsync(async (req, res, next) => {
   const categories = await category.findAll();
   res.status(200).send({
     status: "success",
