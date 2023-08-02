@@ -3,8 +3,9 @@ const AppError = require("./../utils/appError");
 const multiUpload = require("../utils/multiUpload");
 const removeFile = require("../utils/removeFile");
 const multer = require("multer");
-const { Product, Category } = require("../models");
+const { Product, Category, User } = require("../models");
 const checkType = require("../utils/checkType");
+const { Sequelize } = require("sequelize");
 
 exports.getProducts = catchAsync(async (req, res, next) => {
   const products = await Product.findAll({
@@ -26,19 +27,35 @@ exports.getProducts = catchAsync(async (req, res, next) => {
 exports.getProductById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   checkType(id, "number", false);
-  const products = await Product.findOne({
-    where: { id },
-    include: {
-      model: Category,
-      attributes: ["id", "name"],
-      through: {
-        attributes: [],
-      },
+  const product = await Product.findByPk(id, {
+    attributes: {
+      include: [
+        [Sequelize.fn("COUNT", Sequelize.col("favorite.id")), "favCount"],
+      ],
     },
+    include: [
+      {
+        model: Category,
+        attributes: ["id", "name"],
+        through: {
+          attributes: [],
+        },
+      },
+      {
+        model: User,
+        as: "favorite",
+        attributes: [],
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+    group: ["product.id", "categories.id"],
   });
+
   res.status(200).send({
     status: "success",
-    data: products,
+    data: product,
   });
 });
 
