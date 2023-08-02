@@ -7,6 +7,9 @@ const Post = require("./post");
 Product.belongsToMany(Category, { through: "ProductCategory" });
 Category.belongsToMany(Product, { through: "ProductCategory" });
 
+Product.belongsToMany(User, { through: "Favorite", as: "favorite" });
+User.belongsToMany(Product, { through: "Favorite", as: "favorite" });
+
 User.hasMany(Post);
 Post.belongsTo(User);
 
