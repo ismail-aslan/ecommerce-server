@@ -5,6 +5,7 @@ const validateToken = require("../middleware/validateToken");
 const checkEmailVerification = require("../middleware/checkEmailVerification");
 
 router
+  .get("/", validateToken, checkEmailVerification, favController.getUserFavs)
   .get("/:id", validateToken, checkEmailVerification, favController.addFav)
   .delete(
     "/:id",

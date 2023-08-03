@@ -16,6 +16,16 @@ exports.addFav = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getUserFavs = catchAsync(async (req, res, next) => {
+  const user = req.user;
+
+  const products = await user.getFavorite();
+  res.status(200).send({
+    status: "success",
+    data: products,
+  });
+});
+
 exports.removeFav = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const user = req.user;
