@@ -36,15 +36,15 @@ router
     checkEmployee,
     productController.deleteProductById
   )
-  .post(
-    "/list",
+  .get(
+    "/list/:id",
     validateToken,
     checkEmailVerification,
     checkEmployee,
     productController.listProductById
   )
-  .post(
-    "/delist",
+  .get(
+    "/delist/:id",
     validateToken,
     checkEmailVerification,
     checkEmployee,

@@ -78,6 +78,22 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   checkType(isListed, "boolean", true);
   checkType(categoryIds, "array", true);
 
+  const stripeProduct = await stripe.products.create({
+    active: isListed,
+    name: title,
+    description: description,
+    // images: [image],
+  });
+  let stripePrice = null;
+  if (price) {
+    stripePrice = await stripe.prices.create({
+      unit_amount: parseInt(price * 100), // Convert price to cents
+      currency: "eur",
+      product: stripeProduct.id,
+    });
+  }
+  console.log("stripeProduct", stripeProduct);
+
   const product = await Product.create({
     title,
     price,
@@ -85,6 +101,8 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     description,
     unitCount,
     isListed,
+    stripeProductId: stripeProduct.id,
+    stripePriceId: stripePrice?.id,
   });
 
   let selectedCategories = [];
@@ -146,15 +164,51 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
   if (!selectedProduct) {
     return next(new AppError("There isn't any product with that id.", 400));
   }
+  //#region stripe update
+  if (
+    (title !== undefined && selectedProduct.title !== title) ||
+    (description !== undefined &&
+      selectedProduct.description !== description) ||
+    (isListed !== undefined && selectedProduct.isListed !== isListed)
+  ) {
+    await stripe.products.update(selectedProduct.stripeProductId, {
+      name: title !== undefined ? title : selectedProduct.title,
+      description:
+        description !== undefined ? description : selectedProduct.description,
+      active: isListed !== undefined ? isListed : selectedProduct.isListed,
+    });
+  }
+  if (price !== undefined && price !== selectedProduct.price) {
+    if (price) {
+      await stripe.prices.update(selectedProduct.stripePriceId, {
+        active: false,
+      });
+      const stripePrice = await stripe.prices.create({
+        unit_amount: parseInt(price * 100), // Convert price to cents
+        currency: "eur",
+        product: selectedProduct.stripeProductId,
+      });
+      selectedProduct.stripePriceId = stripePrice.id;
+    } else {
+      await stripe.prices.update(selectedProduct.stripePriceId, {
+        active: false,
+      });
+      selectedProduct.stripePriceId = null;
+    }
+  }
+  //#endregion stripe update
+
   if (title) {
     selectedProduct.title = title;
   }
+
   if (price !== undefined) {
     if (price !== selectedProduct.price) {
       selectedProduct.prevPrice = selectedProduct.price;
     }
     selectedProduct.price = price;
   }
+
   if (showDiscount !== undefined) {
     selectedProduct.showDiscount = showDiscount || false;
   }
@@ -168,7 +222,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
     selectedProduct.unitCount = unitCount || 0;
   }
   if (isListed !== undefined) {
-    selectedProduct.unitCount = isListed || false;
+    selectedProduct.isListed = isListed || false;
   }
 
   let selectedCategories = [];
@@ -226,6 +280,8 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
     if (err instanceof multer.MulterError) {
       // A Multer error occurred when uploading.
       return next(new AppError(err.message, 500));
+    } else if (err?.message === "Unexpected end of form") {
+      return next(new AppError(err.message, 400));
     } else if (err) {
       // An unknown error occurred when uploading.
       if (err.name == "ExtensionError") {
@@ -270,7 +326,17 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
     selectedProduct.images = images;
 
     await selectedProduct.save();
-
+    await stripe.products.update(selectedProduct.stripeProductId, {
+      //! TODO
+      // images: images.map((el) => `${process.env.BASE_URL}uploads/${el}`),
+      images: images.map(
+        (_, idx) =>
+          [
+            `https://www.mountaingoatsoftware.com/uploads/blog/2016-09-06-what-is-a-product.png`,
+            `https://unctad.org/sites/default/files/inline-images/ccpb_workinggroup_productsafety_800x450.jpg`,
+          ][idx]
+      ),
+    });
     const result = await Product.findOne({
       where: { id },
       include: {
@@ -306,7 +372,13 @@ exports.deleteProductById = catchAsync(async (req, res, next) => {
       removeFile(imgLink.split("/uploads/")[1])
     );
   }
-
+  await stripe.prices.update(selectedProduct.stripePriceId, { active: false });
+  await stripe.products.update(selectedProduct.stripeProductId, {
+    metadata: { deletedAt: Date.now() },
+    active: false,
+    name: "DELETED-" + selectedProduct.title,
+    images: [],
+  });
   await selectedProduct.destroy();
 
   res.status(204).send({
@@ -315,7 +387,7 @@ exports.deleteProductById = catchAsync(async (req, res, next) => {
 });
 
 exports.listProductById = catchAsync(async (req, res, next) => {
-  const { id } = req.body;
+  const { id } = req.params;
   checkType(id, "number", false);
 
   const selectedProduct = await Product.findOne({
@@ -350,6 +422,9 @@ exports.listProductById = catchAsync(async (req, res, next) => {
     );
   }
   selectedProduct.isListed = true;
+  await stripe.products.update(selectedProduct.stripeProductId, {
+    active: true,
+  });
   selectedProduct.save();
   if (!selectedProduct.description) {
     warnings.push("No product description.");
@@ -365,18 +440,25 @@ exports.listProductById = catchAsync(async (req, res, next) => {
   });
 });
 exports.delistProductById = catchAsync(async (req, res, next) => {
-  const { id } = req.body;
+  const { id } = req.params;
   checkType(id, "number", false);
 
-  await Product.update(
+  const [result, [selectedProduct]] = await Product.update(
     {
       isListed: false,
     },
     {
       where: { id },
+      returning: true,
     }
   );
+  if (result === 0) {
+    return next(new AppError("There isn't any product with that id.", 400));
+  }
 
+  await stripe.products.update(selectedProduct?.stripeProductId, {
+    active: false,
+  });
   res.status(204).send({
     status: "success",
   });

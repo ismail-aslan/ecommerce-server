@@ -54,6 +54,14 @@ module.exports = ecommercedb.define(
       type: Sequelize.TEXT,
       allowNull: true,
     },
+    stripeProductId: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+    },
+    stripePriceId: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
   },
   {
     timestamps: true,

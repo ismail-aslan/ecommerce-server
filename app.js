@@ -10,6 +10,7 @@ const globalErrorHandler = require("./middleware/globalErrorHandler");
 const swaggerUI = require("swagger-ui-express");
 const docs = require("./docs");
 
+global.stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 global.__basedir = __dirname;
 
 // to parse the incoming requests with JSON payloads
