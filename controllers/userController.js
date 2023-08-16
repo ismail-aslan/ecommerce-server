@@ -25,7 +25,7 @@ exports.createUser = catchAsync(async (req, res, next) => {
     const newUser = await User.create({
       name,
       surname,
-      password: bcrypt.hashSync(password, 8),
+      password: bcrypt.hashSync(password, 10),
       email,
     });
     const verificationCode = createToken({ email });
