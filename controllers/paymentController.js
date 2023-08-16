@@ -38,6 +38,9 @@ exports.createCheckoutSession = catchAsync(async (req, res, next) => {
     });
     cartIds.push(cart.id);
   }
+  if (lineItems.length === 0) {
+    return next(new AppError("No cart item"));
+  }
   const session = await stripe.checkout.sessions.create({
     billing_address_collection: "auto",
     shipping_address_collection: {
