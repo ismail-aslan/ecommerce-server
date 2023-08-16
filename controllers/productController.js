@@ -92,7 +92,6 @@ exports.createProduct = catchAsync(async (req, res, next) => {
       product: stripeProduct.id,
     });
   }
-  console.log("stripeProduct", stripeProduct);
 
   const product = await Product.create({
     title,
