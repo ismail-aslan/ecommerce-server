@@ -120,6 +120,11 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 
   await product.save();
 
+  await stripe.products.update(stripeProduct.id, {
+    metadata: {
+      productId: product.id,
+    },
+  });
   const result = await Product.findOne({
     where: { id: product.id },
     include: {
