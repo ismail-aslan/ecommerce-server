@@ -1,8 +1,9 @@
 const Product = require("./product");
 const Category = require("./category");
 const User = require("./user");
-const Post = require("./post");
 const Cart = require("./cart");
+const Order = require("./order");
+const OrderItem = require("./orderItem");
 
 // table relationships
 Product.belongsToMany(Category, { through: "ProductCategory" });
@@ -20,4 +21,14 @@ Product.hasMany(Cart);
 Cart.belongsTo(Product);
 //#endregion
 
-module.exports = { Product, Category, User };
+User.hasMany(Order);
+Order.belongsTo(User);
+
+Product.belongsToMany(Order, { through: OrderItem });
+Order.belongsToMany(Product, { through: OrderItem });
+Order.hasMany(OrderItem);
+OrderItem.belongsTo(Order);
+Product.hasMany(OrderItem);
+OrderItem.belongsTo(Product);
+
+module.exports = { Product, Category, User, Cart, Order, OrderItem };
