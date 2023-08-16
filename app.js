@@ -13,8 +13,14 @@ const docs = require("./docs");
 global.stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 global.__basedir = __dirname;
 
-// to parse the incoming requests with JSON payloads
-app.use(express.json());
+// Use JSON parser for all non-stripe-webhook routes
+app.use((req, res, next) => {
+  if (req.originalUrl === "/api/v1/payment/process-payment") {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 // to parse the incoming requests in urlencodedform
 app.use(express.urlencoded({ extended: true }));
 // to serve the static files
