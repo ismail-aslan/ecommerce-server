@@ -1,5 +1,5 @@
 const { ORDER_STATUS } = require("../constants");
-const { Order, OrderItem, User, Product } = require("../models");
+const { Order, OrderItem, Product } = require("../models");
 const AppError = require("../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
 
@@ -82,5 +82,25 @@ exports.getOrderById = catchAsync(async (req, res, next) => {
   res.status(200).send({
     status: "success",
     data: order,
+  });
+});
+
+exports.updateOrderById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { status } = req.query;
+
+  if (!status || !ORDER_STATUS.includes(status)) {
+    return next(new AppError("Invalid status", 400));
+  }
+  const order = await Order.update(
+    { status },
+    {
+      where: { id },
+    }
+  );
+
+  res.status(200).send({
+    status: "success",
+    data: order[0],
   });
 });

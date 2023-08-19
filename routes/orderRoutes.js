@@ -19,6 +19,13 @@ router
     checkEmailVerification,
     checkAdmin,
     orderController.getOrderById
+  )
+  .patch(
+    "/:id",
+    validateToken,
+    checkEmailVerification,
+    checkAdmin,
+    orderController.updateOrderById
   );
 
 module.exports = router;
