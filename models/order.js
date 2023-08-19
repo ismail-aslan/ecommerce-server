@@ -2,6 +2,7 @@
 
 const Sequelize = require("sequelize");
 const { ecommercedb } = require("./db");
+const { ORDER_STATUS } = require("../constants");
 
 module.exports = ecommercedb.define(
   "order",
@@ -12,27 +13,36 @@ module.exports = ecommercedb.define(
       autoIncrement: true,
       allowNull: false,
     },
-    contactName: {
+    recieverName: {
       type: Sequelize.TEXT,
       allowNull: true,
     },
-    contactEmail: {
+    addressLine1: {
       type: Sequelize.TEXT,
       allowNull: true,
     },
-    shippingDetails: {
-      type: Sequelize.JSONB,
+    addressLine2: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    city: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    state: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    country: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    postalCode: {
+      type: Sequelize.NUMBER,
       allowNull: true,
     },
     status: {
-      type: Sequelize.DataTypes.ENUM([
-        "pending",
-        "paid",
-        "ready",
-        "shipped",
-        "canceled",
-        "resulted",
-      ]),
+      type: Sequelize.DataTypes.ENUM(ORDER_STATUS),
       allowNull: false,
       defaultValue: "pending",
     },

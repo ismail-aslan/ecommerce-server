@@ -1,6 +1,5 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-const category = require("../models/category");
 const { Product } = require("../models");
 
 exports.addFav = catchAsync(async (req, res, next) => {

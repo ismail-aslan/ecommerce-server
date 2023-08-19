@@ -1,9 +1,9 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-const category = require("../models/category");
+const { Category } = require("../models");
 
 exports.getCategories = catchAsync(async (req, res, next) => {
-  const categories = await category.findAll();
+  const categories = await Category.findAll();
   res.status(200).send({
     status: "success",
     data: categories,
@@ -12,7 +12,7 @@ exports.getCategories = catchAsync(async (req, res, next) => {
 
 exports.getCategoryById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const categories = await category.findOne({
+  const categories = await Category.findOne({
     where: { id },
   });
   res.status(200).send({
@@ -26,7 +26,7 @@ exports.createCategory = catchAsync(async (req, res, next) => {
   if (!name) {
     return next(new AppError("Missing data", 400));
   }
-  const result = await category.create({ name });
+  const result = await Category.create({ name });
   res.status(201).send({
     status: "success",
     data: result,
@@ -36,7 +36,7 @@ exports.createCategory = catchAsync(async (req, res, next) => {
 exports.updateCategoryById = catchAsync(async (req, res, next) => {
   const { id, name } = req.body;
 
-  const categories = await category.update(
+  const categories = await Category.update(
     { name },
     {
       where: { id },
@@ -57,7 +57,7 @@ exports.updateCategoryById = catchAsync(async (req, res, next) => {
 exports.deleteCategoryById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  await category.destroy({
+  await Category.destroy({
     where: { id },
   });
 

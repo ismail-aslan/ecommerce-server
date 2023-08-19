@@ -1,9 +1,6 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-const category = require("../models/category");
-const { Product, User } = require("../models");
-const Cart = require("../models/cart");
-const product = require("../models/product");
+const { Product, User, Cart } = require("../models");
 
 exports.addToCart = catchAsync(async (req, res, next) => {
   const { id } = req.params;
@@ -83,7 +80,7 @@ exports.getUserCart = catchAsync(async (req, res, next) => {
     include: {
       model: Cart,
       include: {
-        model: product,
+        model: Product,
         where: {
           isListed: true,
         },

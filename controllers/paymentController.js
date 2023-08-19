@@ -1,6 +1,5 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-
 const { Product, Order, Cart, User, OrderItem } = require("../models");
 const { ecommercedb } = require("../models/db");
 
@@ -120,8 +119,13 @@ exports.stripeWebhook = catchAsync(async (req, res, next) => {
           await Order.create(
             {
               shippingDetails: session.shipping_details,
-              contactName: session.customer_details.name,
-              contactEmail: session.customer_details.email,
+              recieverName: session.shipping_details.name,
+              addressLine1: session.shipping_details.address.line1,
+              addressLine2: session.shipping_details.address.line2,
+              city: session.shipping_details.address.city,
+              state: session.shipping_details.address.state,
+              country: session.shipping_details.address.country,
+              postalCode: session.shipping_details.address.postal_code,
               userId: cartItems[0].userId,
               orderItems: session.line_items.data.map((item) => ({
                 price: item.price.unit_amount / 100,

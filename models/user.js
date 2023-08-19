@@ -2,6 +2,7 @@
 
 const Sequelize = require("sequelize");
 const { ecommercedb } = require("./db");
+const { USER_STATUS, USER_ROLE } = require("../constants");
 
 module.exports = ecommercedb.define(
   "user",
@@ -24,12 +25,12 @@ module.exports = ecommercedb.define(
       allowNull: false,
     },
     userStatus: {
-      type: Sequelize.DataTypes.ENUM(["pending", "active", "disabled"]),
+      type: Sequelize.DataTypes.ENUM(USER_STATUS),
       allowNull: false,
       defaultValue: "pending",
     },
     userRole: {
-      type: Sequelize.DataTypes.ENUM(["standard", "employee", "admin"]),
+      type: Sequelize.DataTypes.ENUM(USER_ROLE),
       allowNull: false,
       defaultValue: "standard",
     },
