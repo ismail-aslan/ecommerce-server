@@ -6,6 +6,7 @@ const createToken = require("../utils/createToken");
 const { sendEmail } = require("../utils/sendEmail");
 const checkType = require("../utils/checkType");
 const verifyToken = require("../utils/verifyToken");
+const { USER_ROLE, USER_STATUS } = require("../constants");
 
 exports.createUser = catchAsync(async (req, res, next) => {
   const { name, surname, email, password } = req.body;
@@ -160,5 +161,38 @@ exports.deleteUserById = catchAsync(async (req, res, next) => {
 
   res.status(204).send({
     status: "success",
+  });
+});
+
+exports.updateUserRoleAndStatus = catchAsync(async (req, res, next) => {
+  const { role, email, status } = req.body;
+  console.log("role, email, status ", role, email, status);
+  if (!email || !(role || status)) {
+    return next(new AppError("Missing data", 400));
+  }
+  console.log(
+    "role && !USER_ROLE.includes(role)",
+    role && !USER_ROLE.includes(role)
+  );
+  if (role && !USER_ROLE.includes(role)) {
+    return next(new AppError("Invalid role", 400));
+  }
+  if (status && !USER_STATUS.includes(status)) {
+    return next(new AppError("Invalid status", 400));
+  }
+  const result = await User.update(
+    {
+      userRole: role,
+      userStatus: status,
+    },
+    {
+      where: { email },
+      returning: true,
+    }
+  );
+
+  res.status(200).send({
+    status: "success",
+    data: result[0],
   });
 });

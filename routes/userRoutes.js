@@ -9,6 +9,13 @@ router
   .get("/:verificationCode", userController.verifyUser)
   .post("/register", userController.createUser)
   .post("/login", userController.login)
+  .post(
+    "/",
+    validateToken,
+    checkEmailVerification,
+    checkAdmin,
+    userController.updateUserRoleAndStatus
+  )
   .delete(
     "/:id",
     validateToken,
