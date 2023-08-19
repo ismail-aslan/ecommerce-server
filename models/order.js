@@ -38,7 +38,7 @@ module.exports = ecommercedb.define(
       allowNull: true,
     },
     postalCode: {
-      type: Sequelize.NUMBER,
+      type: Sequelize.INTEGER,
       allowNull: true,
     },
     status: {
