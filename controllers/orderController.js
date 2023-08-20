@@ -12,7 +12,7 @@ exports.getOrders = catchAsync(async (req, res, next) => {
     limit = "20",
     offset = "0",
   } = req.query;
-  console.log("limit", limit);
+
   if (status && !ORDER_STATUS.includes(status)) {
     return next(
       new AppError(
