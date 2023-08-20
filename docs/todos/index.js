@@ -5,15 +5,13 @@ const updateTodo = require("./update-todo");
 const deleteTodo = require("./delete-todo");
 
 module.exports = {
-  paths: {
-    "/todos": {
-      ...getTodos,
-      ...createTodo,
-    },
-    "/todos/{id}": {
-      ...getTodo,
-      ...updateTodo,
-      ...deleteTodo,
-    },
+  "/todos": {
+    ...getTodos,
+    ...createTodo,
+  },
+  "/todos/{id}": {
+    ...getTodo,
+    ...updateTodo,
+    ...deleteTodo,
   },
 };

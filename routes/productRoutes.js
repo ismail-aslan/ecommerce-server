@@ -8,7 +8,6 @@ const validateUser = require("../middleware/validateUser");
 
 router
   .get("/", validateUser, productController.getProducts)
-  .get("/:id", productController.getProductById)
   .post(
     "/",
     validateToken,
@@ -23,19 +22,20 @@ router
     checkEmployee,
     productController.updateProductById
   )
-  .patch(
-    "/:id/images",
-    validateToken,
-    checkEmailVerification,
-    checkEmployee,
-    productController.updateProductImageById
-  )
+  .get("/:id", productController.getProductById)
   .delete(
     "/:id",
     validateToken,
     checkEmailVerification,
     checkEmployee,
     productController.deleteProductById
+  )
+  .patch(
+    "/:id/images",
+    validateToken,
+    checkEmailVerification,
+    checkEmployee,
+    productController.updateProductImageById
   )
   .get(
     "/list/:id",
