@@ -5,22 +5,91 @@ const removeFile = require("../utils/removeFile");
 const multer = require("multer");
 const { Product, Category, User } = require("../models");
 const checkType = require("../utils/checkType");
-const { Sequelize } = require("sequelize");
+const { Sequelize, Op } = require("sequelize");
+const { ecommercedb } = require("../models/db");
+
+const createCategoryQuery = async (category) => {
+  let categoryQuery = {};
+  if (category) {
+    const categories = await Category.findAll({
+      where: {
+        name: category,
+      },
+      attributes: ["id"],
+      raw: true,
+    });
+
+    if (categories.length > 0) {
+      categoryQuery = {
+        where: {
+          id: categories.map((el) => el.id),
+        },
+      };
+    }
+  }
+  return categoryQuery;
+};
+
+const createProductTextSearchQuery = async (search) => {
+  if (!search) {
+    return {};
+  } else if (Array.isArray(search)) {
+    search = search.map((el) => el.split(" ")).flat();
+  } else {
+    search = search.split(" ");
+  }
+  return {
+    [Op.or]: search
+      .map((el) => [
+        ecommercedb.where(
+          ecommercedb.fn("LOWER", ecommercedb.col("title")),
+          "LIKE",
+          "%" + el.toLowerCase() + "%"
+        ),
+        ecommercedb.where(
+          ecommercedb.fn("LOWER", ecommercedb.col("description")),
+          "LIKE",
+          "%" + el.toLowerCase() + "%"
+        ),
+      ])
+      .flat(),
+  };
+};
 
 exports.getProducts = catchAsync(async (req, res, next) => {
-  const products = await Product.findAll({
+  const isAdmin = req.user?.userRole === "admin";
+
+  const { search, category, isListed } = req.query;
+
+  let categoryQuery = await createCategoryQuery(category);
+  const productSearchQuery = await createProductTextSearchQuery(search);
+
+  let productQuery = { ...productSearchQuery };
+  if (!isAdmin) {
+    productQuery.isListed = true;
+  } else if (isListed !== undefined) {
+    productQuery.isListed = Boolean(isListed);
+  }
+
+  const products = await Product.findAndCountAll({
+    where: {
+      ...productQuery,
+    },
     order: [["id", "DESC"]],
     include: {
       model: Category,
+      ...categoryQuery,
       attributes: ["id", "name"],
       through: {
         attributes: [],
       },
     },
+    distinct: true,
   });
+
   res.status(200).send({
     status: "success",
-    data: products,
+    data: { count: products.count, products: products.rows },
   });
 });
 
@@ -443,6 +512,7 @@ exports.listProductById = catchAsync(async (req, res, next) => {
     data: warnings,
   });
 });
+
 exports.delistProductById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   checkType(id, "number", false);

@@ -4,9 +4,10 @@ const productController = require("./../controllers/productController");
 const validateToken = require("../middleware/validateToken");
 const checkEmailVerification = require("../middleware/checkEmailVerification");
 const checkEmployee = require("../middleware/checkEmployee");
+const validateUser = require("../middleware/validateUser");
 
 router
-  .get("/", productController.getProducts)
+  .get("/", validateUser, productController.getProducts)
   .get("/:id", productController.getProductById)
   .post(
     "/",
