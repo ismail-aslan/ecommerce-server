@@ -59,7 +59,20 @@ const createProductTextSearchQuery = async (search) => {
 exports.getProducts = catchAsync(async (req, res, next) => {
   const isAdmin = req.user?.userRole === "admin";
 
-  const { search, category, isListed } = req.query;
+  const { search, category, isListed, limit = "20", offset = "0" } = req.query;
+
+  if (!["1", "2", "10", "20", "30"].includes(limit)) {
+    return next(new AppError(`Invalid limit query`, 400));
+  }
+
+  if (
+    !(
+      typeof offset === "number" ||
+      (typeof offset === "string" && /^-?\d+$/.test(offset))
+    )
+  ) {
+    return next(new AppError(`Invalid offset query`, 400));
+  }
 
   let categoryQuery = await createCategoryQuery(category);
   const productSearchQuery = await createProductTextSearchQuery(search);
@@ -85,6 +98,8 @@ exports.getProducts = catchAsync(async (req, res, next) => {
       },
     },
     distinct: true,
+    limit,
+    offset,
   });
 
   res.status(200).send({
