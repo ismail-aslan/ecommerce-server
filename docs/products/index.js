@@ -503,7 +503,7 @@ module.exports = {
       },
     },
   },
-  "/list/{id}": {
+  "/products/list/{id}": {
     get: {
       summary: "List a product by ID",
       tags: ["Products"],
@@ -542,12 +542,12 @@ module.exports = {
           $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          $ref: "#/components/responses/ServerError",
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
   },
-  "/delist/{id}": {
+  "/products/delist/{id}": {
     get: {
       summary: "Delist a product by ID",
       tags: ["Products"],
@@ -578,7 +578,7 @@ module.exports = {
           $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          $ref: "#/components/responses/ServerError",
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
