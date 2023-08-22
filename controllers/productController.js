@@ -225,6 +225,40 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   });
 });
 
+const updateStripeProduct = async (
+  selectedProduct,
+  title,
+  description,
+  isListed
+) => {
+  return await stripe.products.update(selectedProduct.stripeProductId, {
+    name: title !== undefined ? title : selectedProduct.title,
+    description:
+      description !== undefined ? description : selectedProduct.description,
+    active: isListed !== undefined ? isListed : selectedProduct.isListed,
+  });
+};
+
+const updateStripePrice = async (selectedProduct, price) => {
+  if (price) {
+    await stripe.prices.update(selectedProduct.stripePriceId, {
+      active: false,
+    });
+    const stripePrice = await stripe.prices.create({
+      unit_amount: parseInt(price * 100), // Convert price to cents
+      currency: "eur",
+      product: selectedProduct.stripeProductId,
+    });
+    selectedProduct.stripePriceId = stripePrice.id;
+  } else {
+    await stripe.prices.update(selectedProduct.stripePriceId, {
+      active: false,
+    });
+    selectedProduct.stripePriceId = null;
+  }
+  return;
+};
+
 exports.updateProductById = catchAsync(async (req, res, next) => {
   const {
     id,
@@ -253,37 +287,22 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
     throwError("There isn't any product with that id.", 400);
   }
   //#region stripe update
-  // Update Stripe product if necessary
-  if (
-    (title !== undefined && selectedProduct.title !== title) ||
-    (description !== undefined &&
-      selectedProduct.description !== description) ||
-    (isListed !== undefined && selectedProduct.isListed !== isListed)
-  ) {
-    await stripe.products.update(selectedProduct.stripeProductId, {
-      name: title !== undefined ? title : selectedProduct.title,
-      description:
-        description !== undefined ? description : selectedProduct.description,
-      active: isListed !== undefined ? isListed : selectedProduct.isListed,
-    });
+  const isTitleChanged = title !== undefined && selectedProduct.title !== title;
+
+  const isDescriptionChanged =
+    description !== undefined && selectedProduct.description !== description;
+
+  const isListingStatusChanged =
+    isListed !== undefined && selectedProduct.isListed !== isListed;
+
+  const isPriceChanged = price !== undefined && price !== selectedProduct.price;
+
+  if (isTitleChanged || isDescriptionChanged || isListingStatusChanged) {
+    await updateStripeProduct(selectedProduct, title, description, isListed);
   }
-  if (price !== undefined && price !== selectedProduct.price) {
-    if (price) {
-      await stripe.prices.update(selectedProduct.stripePriceId, {
-        active: false,
-      });
-      const stripePrice = await stripe.prices.create({
-        unit_amount: parseInt(price * 100), // Convert price to cents
-        currency: "eur",
-        product: selectedProduct.stripeProductId,
-      });
-      selectedProduct.stripePriceId = stripePrice.id;
-    } else {
-      await stripe.prices.update(selectedProduct.stripePriceId, {
-        active: false,
-      });
-      selectedProduct.stripePriceId = null;
-    }
+
+  if (isPriceChanged) {
+    await updateStripePrice(selectedProduct, price);
   }
   //#endregion stripe update
 
@@ -346,6 +365,20 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
   });
 });
 
+const updateStripeProductImages = async (selectedProduct, images) => {
+  await stripe.products.update(selectedProduct.stripeProductId, {
+    //! TODO
+    // images: images.map((el) => `${process.env.BASE_URL}uploads/${el}`),
+    images: images.map(
+      (_, idx) =>
+        [
+          `https://www.mountaingoatsoftware.com/uploads/blog/2016-09-06-what-is-a-product.png`,
+          `https://unctad.org/sites/default/files/inline-images/ccpb_workinggroup_productsafety_800x450.jpg`,
+        ][idx]
+    ),
+  });
+};
+
 exports.updateProductImageById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   checkType(id, "number", false);
@@ -385,17 +418,18 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
     if (!Array.isArray(unchangedImgs) && unchangedImgs) {
       unchangedImgs = [unchangedImgs];
     }
-
+    console.log("unchangedImgs", unchangedImgs);
     const images = [...req.files?.map((f) => f.filename)];
     const filteredUnchangedImgs = [];
     for (const imageLink of unchangedImgs) {
       const fileName = imageLink.split("/uploads/")[1];
+      console.log("fileName", fileName, selectedProduct.images);
       if (
-        fileName &&
-        fileName.startsWith(process.env.BASE_URL) &&
-        (fileName.endsWith("png") ||
-          fileName.endsWith("jpg") ||
-          fileName.endsWith("jpeg")) &&
+        imageLink &&
+        imageLink.startsWith(process.env.BASE_URL) &&
+        (imageLink.endsWith("png") ||
+          imageLink.endsWith("jpg") ||
+          imageLink.endsWith("jpeg")) &&
         selectedProduct.images.includes(imageLink)
       ) {
         images.unshift(fileName);
@@ -412,20 +446,17 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
         await removeFile(splitedLink[splitedLink.length - 1]);
       }
     }
-    selectedProduct.images = images;
+
+    if (images.length > 2) {
+      for (let i = 2; i < images.length; i++) {
+        const file = images[i];
+        await removeFile(file);
+      }
+    }
+    selectedProduct.images = images.slice(0, 2);
 
     await selectedProduct.save();
-    await stripe.products.update(selectedProduct.stripeProductId, {
-      //! TODO
-      // images: images.map((el) => `${process.env.BASE_URL}uploads/${el}`),
-      images: images.map(
-        (_, idx) =>
-          [
-            `https://www.mountaingoatsoftware.com/uploads/blog/2016-09-06-what-is-a-product.png`,
-            `https://unctad.org/sites/default/files/inline-images/ccpb_workinggroup_productsafety_800x450.jpg`,
-          ][idx]
-      ),
-    });
+    await updateStripeProductImages(selectedProduct, images);
     const result = await Product.findOne({
       where: { id },
       include: {
