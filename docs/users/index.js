@@ -84,7 +84,17 @@ module.exports = {
       ],
       responses: {
         302: {
-          description: "Redirect",
+          description:
+            "Redirects to another page according to validation results",
+          headers: {
+            Location: {
+              schema: {
+                type: "string",
+              },
+              description:
+                process.env.CLIENT_BASE_URL + "?verified={verification result}",
+            },
+          },
         },
         400: {
           $ref: "#/components/responses/BadRequest",

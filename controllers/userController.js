@@ -99,9 +99,9 @@ exports.verifyUser = catchAsync(async (req, res, next) => {
 
     // user.token = token;
     await user.save();
-    res.redirect(`https://ecommerce.ismailaslan.me/?verified=true`);
+    res.redirect(`${process.env.CLIENT_BASE_URL}?verified=true`);
   } catch (error) {
-    res.redirect(`https://ecommerce.ismailaslan.me/?verified=false`);
+    res.redirect(`${process.env.CLIENT_BASE_URL}?verified=false`);
   }
 });
 
