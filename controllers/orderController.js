@@ -1,4 +1,4 @@
-const { ORDER_STATUS } = require("../constants");
+const { ORDER_STATUS, VALID_LIMIT_VALUES } = require("../constants");
 const { Order, OrderItem, Product } = require("../models");
 const AppError = require("../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
@@ -25,7 +25,7 @@ exports.getOrders = catchAsync(async (req, res, next) => {
   if (order_by && !["id", "user", "USER"].includes(order_by)) {
     return next(new AppError(`Invalid order_by query`, 400));
   }
-  if (!["1", "2", "10", "20", "30"].includes(limit)) {
+  if (!VALID_LIMIT_VALUES.includes(limit)) {
     return next(new AppError(`Invalid limit query`, 400));
   }
   if (

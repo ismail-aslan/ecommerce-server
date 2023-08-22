@@ -1,3 +1,5 @@
+const { VALID_LIMIT_VALUES } = require("../../constants");
+
 module.exports = {
   "/orders": {
     get: {
@@ -32,7 +34,7 @@ module.exports = {
         {
           in: "query",
           name: "limit",
-          schema: { type: "string", enum: ["1", "2", "10", "20", "30"] },
+          schema: { type: "string", enum: VALID_LIMIT_VALUES },
           description: "Limit the number of results per page",
         },
         {

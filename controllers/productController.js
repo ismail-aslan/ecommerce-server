@@ -7,6 +7,7 @@ const multiUpload = require("../utils/multiUpload");
 const removeFile = require("../utils/removeFile");
 const checkType = require("../utils/checkType");
 const throwError = require("../utils/throwError");
+const { VALID_LIMIT_VALUES } = require("../constants");
 
 const createCategoryQuery = async (category) => {
   let categoryQuery = {};
@@ -61,7 +62,7 @@ exports.getProducts = catchAsync(async (req, res, next) => {
 
   const { search, category, isListed, limit = "20", offset = "0" } = req.query;
 
-  if (!["1", "2", "10", "20", "30"].includes(limit)) {
+  if (!VALID_LIMIT_VALUES.includes(limit)) {
     throwError(`Invalid limit query`, 400);
   }
 
