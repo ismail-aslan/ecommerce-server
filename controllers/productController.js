@@ -1,12 +1,12 @@
+const multer = require("multer");
+const { Op } = require("sequelize");
+const { ecommercedb } = require("../models/db");
+const { Product, Category, User } = require("../models");
 const catchAsync = require("./../utils/catchAsync");
-const AppError = require("./../utils/appError");
 const multiUpload = require("../utils/multiUpload");
 const removeFile = require("../utils/removeFile");
-const multer = require("multer");
-const { Product, Category, User } = require("../models");
 const checkType = require("../utils/checkType");
-const { Sequelize, Op } = require("sequelize");
-const { ecommercedb } = require("../models/db");
+const throwError = require("../utils/throwError");
 
 const createCategoryQuery = async (category) => {
   let categoryQuery = {};
@@ -62,7 +62,7 @@ exports.getProducts = catchAsync(async (req, res, next) => {
   const { search, category, isListed, limit = "20", offset = "0" } = req.query;
 
   if (!["1", "2", "10", "20", "30"].includes(limit)) {
-    return next(new AppError(`Invalid limit query`, 400));
+    throwError(`Invalid limit query`, 400);
   }
 
   if (
@@ -71,7 +71,7 @@ exports.getProducts = catchAsync(async (req, res, next) => {
       (typeof offset === "string" && /^-?\d+$/.test(offset))
     )
   ) {
-    return next(new AppError(`Invalid offset query`, 400));
+    throwError(`Invalid offset query`, 400);
   }
 
   let categoryQuery = await createCategoryQuery(category);
@@ -114,7 +114,7 @@ exports.getProductById = catchAsync(async (req, res, next) => {
   const product = await Product.findByPk(id, {
     attributes: {
       include: [
-        [Sequelize.fn("COUNT", Sequelize.col("favorite.id")), "favCount"],
+        [ecommercedb.fn("COUNT", ecommercedb.col("favorite.id")), "favCount"],
       ],
     },
     include: [
@@ -237,7 +237,7 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
     categoryIds,
   } = req.body;
   checkType(id, "number", false);
-  checkType(title, "string", false);
+  checkType(title, "string", true);
   checkType(price, "number", true);
   checkType(showDiscount, "boolean", true);
   checkType(description, "string", true);
@@ -250,9 +250,10 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
   });
 
   if (!selectedProduct) {
-    return next(new AppError("There isn't any product with that id.", 400));
+    throwError("There isn't any product with that id.", 400);
   }
   //#region stripe update
+  // Update Stripe product if necessary
   if (
     (title !== undefined && selectedProduct.title !== title) ||
     (description !== undefined &&
@@ -361,21 +362,21 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
   });
 
   if (!selectedProduct) {
-    return next(new AppError("There isn't any product with that id.", 400));
+    throwError("There isn't any product with that id.", 400);
   }
 
   multiUpload(req, res, async function (err) {
     if (err instanceof multer.MulterError) {
       // A Multer error occurred when uploading.
-      return next(new AppError(err.message, 500));
+      throwError(err.message, 500);
     } else if (err?.message === "Unexpected end of form") {
-      return next(new AppError(err.message, 400));
+      throwError(err.message, 400);
     } else if (err) {
       // An unknown error occurred when uploading.
       if (err.name == "ExtensionError") {
-        return next(new AppError(err.message, 413));
+        throwError(err.message, 413);
       } else {
-        return next(new AppError(err.message, 500));
+        throwError(err.message, 500);
       }
     }
 
@@ -452,7 +453,7 @@ exports.deleteProductById = catchAsync(async (req, res, next) => {
   });
 
   if (!selectedProduct) {
-    return next(new AppError("There isn't any product with that id.", 400));
+    throwError("There isn't any product with that id.", 400);
   }
 
   if (selectedProduct.images.length > 0) {
@@ -492,22 +493,18 @@ exports.listProductById = catchAsync(async (req, res, next) => {
   const warnings = [];
 
   if (!selectedProduct.price) {
-    return next(new AppError("Price can not be null or zero.", 400));
+    throwError("Price can not be null or zero.", 400);
   }
 
   if (!selectedProduct.prevPrice && selectedProduct.showDiscount) {
-    return next(
-      new AppError(
-        "Previous price can not be null or zero while showing discount.",
-        400
-      )
+    throwError(
+      "Previous price can not be null or zero while showing discount.",
+      400
     );
   }
 
   if (selectedProduct.unitCount === null) {
-    return next(
-      new AppError("Product unit count is needed to list a product", 400)
-    );
+    throwError("Product unit count is needed to list a product", 400);
   }
   selectedProduct.isListed = true;
   await stripe.products.update(selectedProduct.stripeProductId, {
@@ -542,7 +539,7 @@ exports.delistProductById = catchAsync(async (req, res, next) => {
     }
   );
   if (result === 0) {
-    return next(new AppError("There isn't any product with that id.", 400));
+    throwError("There isn't any product with that id.", 400);
   }
 
   await stripe.products.update(selectedProduct?.stripeProductId, {
