@@ -1,6 +1,7 @@
 const { ORDER_STATUS, VALID_LIMIT_VALUES } = require("../constants");
 const { Order, OrderItem, Product } = require("../models");
 const catchAsync = require("./../utils/catchAsync");
+const throwError = require("./../utils/throwError");
 
 exports.getOrders = catchAsync(async (req, res, next) => {
   const {
