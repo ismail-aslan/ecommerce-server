@@ -425,7 +425,7 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
     const filteredUnchangedImgs = [];
     for (const imageLink of unchangedImgs) {
       const fileName = imageLink.split("/uploads/")[1];
-      console.log("fileName", fileName, selectedProduct.images);
+
       if (
         imageLink &&
         imageLink.startsWith(process.env.BASE_URL) &&
