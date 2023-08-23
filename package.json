@@ -23,6 +23,7 @@
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
+    "eslint": "^8.47.0",
     "nodemon": "^3.0.1"
   }
 }
