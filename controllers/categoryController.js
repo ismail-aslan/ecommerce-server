@@ -1,6 +1,6 @@
-const catchAsync = require("./../utils/catchAsync");
-const AppError = require("./../utils/appError");
 const { Category } = require("../models");
+const catchAsync = require("./../utils/catchAsync");
+const throwError = require("./../utils/throwError");
 
 exports.getCategories = catchAsync(async (req, res, next) => {
   const categories = await Category.findAll();
@@ -12,31 +12,31 @@ exports.getCategories = catchAsync(async (req, res, next) => {
 
 exports.getCategoryById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const categories = await Category.findOne({
+  const category = await Category.findOne({
     where: { id },
   });
   res.status(200).send({
     status: "success",
-    data: categories,
+    data: category,
   });
 });
 
 exports.createCategory = catchAsync(async (req, res, next) => {
   const { name } = req.body;
   if (!name) {
-    return next(new AppError("Missing data", 400));
+    throwError("Category name is required.", 400);
   }
-  const result = await Category.create({ name });
+  const createdCategory = await Category.create({ name });
   res.status(201).send({
     status: "success",
-    data: result,
+    data: createdCategory,
   });
 });
 
 exports.updateCategoryById = catchAsync(async (req, res, next) => {
   const { id, name } = req.body;
 
-  const categories = await Category.update(
+  const [updatedCount, updatedCategory] = await Category.update(
     { name },
     {
       where: { id },
@@ -45,12 +45,12 @@ exports.updateCategoryById = catchAsync(async (req, res, next) => {
     }
   );
 
-  if (categories[0] === 0) {
-    return next(new AppError("Missing or wrong parameters", 400));
+  if (updatedCount === 0) {
+    throwError("Category not found or wrong parameters.", 400);
   }
   res.status(200).send({
     status: "success",
-    data: categories,
+    data: updatedCategory,
   });
 });
 

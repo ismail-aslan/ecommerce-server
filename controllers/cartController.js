@@ -1,5 +1,5 @@
 const catchAsync = require("./../utils/catchAsync");
-const AppError = require("./../utils/appError");
+const throwError = require("./../utils/throwError");
 const { Product, User, Cart } = require("../models");
 
 exports.addToCart = catchAsync(async (req, res, next) => {
@@ -9,9 +9,9 @@ exports.addToCart = catchAsync(async (req, res, next) => {
     where: { id },
   });
   if (!product) {
-    return next(new AppError("Invalid product id", 400));
+    throwError("Invalid product id", 400);
   } else if (!product.isListed) {
-    return next(new AppError("This product is not listed", 400));
+    throwError("This product is not listed", 400);
   }
 
   let result = [];
@@ -45,7 +45,7 @@ exports.removeFromCart = catchAsync(async (req, res, next) => {
     where: { id },
   });
   if (!product) {
-    return next(new AppError("Invalid product id", 400));
+    throwError("Invalid product id", 400);
   }
   const cartItem = await Cart.findOne({
     where: {
@@ -54,7 +54,7 @@ exports.removeFromCart = catchAsync(async (req, res, next) => {
     },
   });
   if (!cartItem) {
-    return next(new AppError("This product is not in your cart", 400));
+    throwError("This product is not in your cart", 400);
   } else if (cartItem.quantity === 1) {
     cartItem.destroy();
     res.status(200).send({

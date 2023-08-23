@@ -419,8 +419,9 @@ exports.updateProductImageById = catchAsync(async (req, res, next) => {
     if (!Array.isArray(unchangedImgs) && unchangedImgs) {
       unchangedImgs = [unchangedImgs];
     }
-    console.log("unchangedImgs", unchangedImgs);
-    const images = [...req.files?.map((f) => f.filename)];
+
+    // eslint-disable-next-line no-unsafe-optional-chaining
+    const images = [...req?.files?.map((f) => f?.filename)];
     const filteredUnchangedImgs = [];
     for (const imageLink of unchangedImgs) {
       const fileName = imageLink.split("/uploads/")[1];

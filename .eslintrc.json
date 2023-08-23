@@ -9,7 +9,7 @@
     "ecmaVersion": "latest"
   },
   "rules": {
-    "no-unused-vars": ["next", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }]
+    "no-unused-vars": "warn"
 },
   "globals": {
     "stripe": true,
