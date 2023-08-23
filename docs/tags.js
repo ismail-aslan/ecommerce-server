@@ -1,5 +1,5 @@
 module.exports = {
-  tags: {
-    name: "Todo CRUD operations",
-  },
+  // tags: {
+  //   name: "Todo CRUD operations",
+  // },
 };
