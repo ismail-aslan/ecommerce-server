@@ -1,6 +1,5 @@
 const { ORDER_STATUS, VALID_LIMIT_VALUES } = require("../constants");
 const { Order, OrderItem, Product } = require("../models");
-const AppError = require("../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
 
 exports.getOrders = catchAsync(async (req, res, next) => {
@@ -14,19 +13,19 @@ exports.getOrders = catchAsync(async (req, res, next) => {
   } = req.query;
 
   if (status && !ORDER_STATUS.includes(status)) {
-    return next(
-      new AppError(
-        `Order status can only be  ${ORDER_STATUS.join(" or ")}`,
-        400
-      )
+    throwError(
+      `Invalid or unsupported order status. Allowed values: ${ORDER_STATUS.join(
+        ", "
+      )}.`,
+      400
     );
   }
 
   if (order_by && !["id", "user", "USER"].includes(order_by)) {
-    return next(new AppError(`Invalid order_by query`, 400));
+    throwError(`Invalid 'order_by' query parameter.`, 400);
   }
   if (!VALID_LIMIT_VALUES.includes(limit)) {
-    return next(new AppError(`Invalid limit query`, 400));
+    throwError(`Invalid 'limit' query parameter.`, 400);
   }
   if (
     !(
@@ -34,7 +33,7 @@ exports.getOrders = catchAsync(async (req, res, next) => {
       (typeof offset === "string" && /^-?\d+$/.test(offset))
     )
   ) {
-    return next(new AppError(`Invalid offset query`, 400));
+    throwError(`Invalid 'offset' query parameter.`, 400);
   }
   const queryObj = {};
 
@@ -79,6 +78,10 @@ exports.getOrderById = catchAsync(async (req, res, next) => {
     ],
   });
 
+  if (!order || order.length === 0) {
+    throwError(`Order with ID ${id} not found.`, 404);
+  }
+
   res.status(200).send({
     status: "success",
     data: order,
@@ -90,7 +93,7 @@ exports.updateOrderById = catchAsync(async (req, res, next) => {
   const { status } = req.query;
 
   if (!status || !ORDER_STATUS.includes(status)) {
-    return next(new AppError("Invalid status", 400));
+    throwError("Invalid or unsupported status value.", 400);
   }
   const order = await Order.update(
     { status },
@@ -98,6 +101,10 @@ exports.updateOrderById = catchAsync(async (req, res, next) => {
       where: { id },
     }
   );
+
+  if (!order || order[0] === 0) {
+    throwError(`Order with ID ${id} not found.`, 404);
+  }
 
   res.status(200).send({
     status: "success",
