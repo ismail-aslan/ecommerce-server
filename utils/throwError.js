@@ -1,5 +1,6 @@
 const generateError = require("./generateError");
 
-module.exports = (message, statusCode) => {
+const throwError = (message, statusCode) => {
   throw generateError(message, statusCode);
 };
+module.exports = throwError;

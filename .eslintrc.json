@@ -8,7 +8,9 @@
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "rules": {},
+  "rules": {
+    "no-unused-vars": ["next", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }]
+},
   "globals": {
     "stripe": true,
     "process": true
