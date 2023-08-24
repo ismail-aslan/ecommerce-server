@@ -5,7 +5,7 @@ const url = process.env.DB_URL;
 
 // creating the db instance
 const ecommercedb = new Sequelize(url, {
-  // logging: (f) => console.log("------\n", f, "\n\n"),
+  logging: () => null,
   dialect: "postgres",
   define: {
     underscored: true,
