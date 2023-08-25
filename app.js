@@ -4,6 +4,7 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const cors = require("cors");
 const api = require("./api");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./middleware/globalErrorHandler");
@@ -12,6 +13,21 @@ const docs = require("./docs");
 
 global.stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 global.__basedir = __dirname;
+
+const whitelist = [
+  "https://ecommerce.ismailaslan.me",
+  "https://api-ecommerce.ismailaslan.me",
+];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new AppError("Not allowed by CORS", 403));
+    }
+  },
+};
+app.use(cors(corsOptions));
 
 // Use JSON parser for all non-stripe-webhook routes
 app.use((req, res, next) => {
