@@ -14,21 +14,7 @@ const docs = require("./docs");
 global.stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 global.__basedir = __dirname;
 
-const whitelist = [
-  "https://ecommerce.ismailaslan.me",
-  "https://api-ecommerce.ismailaslan.me",
-];
-const corsOptionsDelegate = function (req, callback) {
-  console.log('req.header("Origin")', req.header("Origin"));
-  let corsOptions;
-  if (whitelist.indexOf(req.header("Origin")) !== -1) {
-    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false }; // disable CORS for this request
-  }
-  callback(null, corsOptions); // callback expects two parameters: error and options
-};
-app.use(cors(corsOptionsDelegate));
+app.use(cors());
 
 // Use JSON parser for all non-stripe-webhook routes
 app.use((req, res, next) => {
