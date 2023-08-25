@@ -18,16 +18,17 @@ const whitelist = [
   "https://ecommerce.ismailaslan.me",
   "https://api-ecommerce.ismailaslan.me",
 ];
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new AppError("Not allowed by CORS", 403));
-    }
-  },
+const corsOptionsDelegate = function (req, callback) {
+  console.log('req.header("Origin")', req.header("Origin"));
+  let corsOptions;
+  if (whitelist.indexOf(req.header("Origin")) !== -1) {
+    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false }; // disable CORS for this request
+  }
+  callback(null, corsOptions); // callback expects two parameters: error and options
 };
-app.use(cors(corsOptions));
+app.use(cors(corsOptionsDelegate));
 
 // Use JSON parser for all non-stripe-webhook routes
 app.use((req, res, next) => {
