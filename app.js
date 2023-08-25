@@ -33,7 +33,7 @@ if (process.env.NODE_ENV === "development") {
 
 // redirect incoming requests to api.js
 app.use("/api/v1", api);
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(docs));
+app.use("/docs", swaggerUI.serve, swaggerUI.setup(docs));
 app.get("/uploads", express.static("./public"));
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

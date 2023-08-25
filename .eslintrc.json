@@ -13,6 +13,8 @@
 },
   "globals": {
     "stripe": true,
-    "process": true
+    "process": true,
+    "__dirname":true,
+    "__basedir":true
   }
 }
