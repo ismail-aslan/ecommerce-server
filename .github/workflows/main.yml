@@ -1,5 +1,4 @@
-# .github/workflows/main.yml
-name: Node.js CI/CD
+name: Node Github CI
 
 on:
   push:
@@ -7,27 +6,38 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    
+
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-  
-      # caching the dependency
-      - name: 'Cache Dependencies'
-        uses: 'actions/cache@v3'
-        id: cache-node-modules
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
-          path: 'node_modules'
-          key: deps-node-modules-${{ hashFiles('**/yarn.lock') }}
+          node-version: ${{ matrix.node-version }}
+      - name: install dependancies
+        run: yarn
+        env:
+          CI: true
 
-      - name: Install dependencies
-        # only run npm i if cache not found
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: yarn i
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
 
-
-
-      - name: Build application(simulates the deploy)
-        run: pm2 restart all
+    steps:
+      - name: SSH and deploy node app
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ~/ecommerce-server
+            git pull origin main
+            yarn
+            pm2 restart all
