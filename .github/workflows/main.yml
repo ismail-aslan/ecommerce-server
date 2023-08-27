@@ -39,6 +39,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ~/ecommerce-server
+            git config --global url."https://github.com/".insteadOf ssh://git@github.com/
             git pull origin main
             yarn
             pm2 restart all
