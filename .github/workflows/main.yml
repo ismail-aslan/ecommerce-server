@@ -35,6 +35,8 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ~/ecommerce-server
+            source ~/.nvm/nvm.sh  # Load NVM environment
+            nvm use 16.20.2
             git pull origin main
-            /home/runner/.nvm/versions/node/v16.20.2/bin/npm ci
-            /home/runner/.nvm/versions/node/v16.20.2/bin/pm2 restart all
+            npm ci
+            pm2 restart all
