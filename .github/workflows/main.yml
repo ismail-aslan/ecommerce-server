@@ -30,7 +30,7 @@ jobs:
             cd ~/ecommerce-server
             echo "PATH: $PATH"
             echo "-----------*****----------------"
-            which npm
+            which yarn
             echo "-----------*****----------------"
             which pm2
             echo "-----------*****----------------"
