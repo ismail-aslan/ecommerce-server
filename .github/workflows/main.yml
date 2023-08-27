@@ -28,6 +28,9 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ~/ecommerce-server
+            echo "PATH: $PATH"
+            which npm
+            which pm2
             git pull origin main
             npm ci
             pm2 restart all
