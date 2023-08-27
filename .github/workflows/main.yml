@@ -7,22 +7,23 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         node-version: [16.x]
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Initialize NVM
+      - name: Install NVM
         run: |
-          export NVM_DIR="/home/runner/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-      - name: Set Node.js version
-        run: nvm use 18.16.1
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      - name: Use Node.js ${{ matrix.node-version }}
+        run: nvm use ${{ matrix.node-version }}
       - name: SSH and deploy node app
         uses: appleboy/ssh-action@master
         with:
@@ -33,12 +34,6 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ~/ecommerce-server
-            echo "PATH: $PATH"
-            echo "-----------*****----------------"
-            ls -al /home/ubuntu/.nvm/versions/node
-            echo "-----------*****----------------"
-            which pm2
-            echo "-----------*****----------------"
             git pull origin main
-            /home/ubuntu/.nvm/versions/node/v18.16.1/bin/npm ci
-            /home/ubuntu/.yarn/bin/pm2 restart all
+            npm ci
+            pm2 restart all
