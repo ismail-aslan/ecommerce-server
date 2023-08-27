@@ -40,5 +40,5 @@ jobs:
           script: |
             cd ~/ecommerce-server
             git pull origin main
-            yarn
+            yarn install
             pm2 restart all
