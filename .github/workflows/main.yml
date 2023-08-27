@@ -1,4 +1,4 @@
-name: Node.js CI/CD
+name: Node Github CI
 
 on:
   push:
@@ -6,22 +6,43 @@ on:
       - main
 
 jobs:
-  build:
+  test:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "yarn"
+        env:
+          CI: true
+
+  deploy:
+    needs: [test]
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Install yarn
+        run: npm install -g yarn
 
-        # We just added another step and relative path of the custom action
-      - name: Load & Cache Dependencies
-        uses: ./.github/actions/cached-deps
+      - name: SSH and deploy node app
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          script: |
+            cd ~/ecommerce-server
+            git pull origin main
+            yarn install
+            pm2 restart all
 
-      # - name: Lint code
-      #   run: npm run lint
-
-      # - name: Run tests
-      #   run: npm test
-
-      - name: Build application(simulates the deploy)
-        run: pm2 restart all
+      - name: Clean up
+        if: always()
+        run: npm uninstall -g yarn
