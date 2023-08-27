@@ -26,9 +26,6 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Install yarn
-        run: npm install -g yarn
-
       - name: SSH and deploy node app
         uses: appleboy/ssh-action@master
         with:
@@ -40,9 +37,5 @@ jobs:
           script: |
             cd ~/ecommerce-server
             git pull origin main
-            yarn install
+            npm ci
             pm2 restart all
-
-      - name: Clean up
-        if: always()
-        run: npm uninstall -g yarn
