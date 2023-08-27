@@ -406,7 +406,7 @@ const userVerification = (email, verificationUrl) => {
                                                               <td align="center"
                                                                   style="padding:0;Margin:0;padding-right:20px;padding-left:20px;font-size:0">
                                                                   <img class="adapt-img"
-                                                                      src="http://localhost:8000/assets/images/email_profile.png"
+                                                                      src="${process.env.BASE_URL}assets/images/email_profile.png"
                                                                       alt="Image"
                                                                       style="display:block;font-size:14px;border:0;outline:none;text-decoration:none"
                                                                       title="Image" width="260"></td>
