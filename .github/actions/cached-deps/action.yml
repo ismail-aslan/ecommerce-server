@@ -12,6 +12,6 @@ runs:
 
     - name: Install Dependencies
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
-      run: yarn install
+      run: yarn i
       # the shell to be used is required in composite custom actions
       shell: bash
