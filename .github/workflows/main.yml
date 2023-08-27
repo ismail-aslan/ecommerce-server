@@ -12,6 +12,13 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
+      - name: Install yarn
+        run: |-
+          curl -fsSL --create-dirs -o $HOME/bin/yarn \
+          https://github.com/yarnpkg/yarn/releases/download/v1.22.19/yarn-1.22.19.js
+          chmod +x $HOME/bin/yarn
+          echo "$HOME/bin" >> $GITHUB_PATH
+
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -20,7 +27,6 @@ jobs:
           cache: "yarn"
         env:
           CI: true
-      - run: corepack enable
 
   deploy:
     needs: [test]
