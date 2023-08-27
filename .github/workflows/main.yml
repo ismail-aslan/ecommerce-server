@@ -35,5 +35,5 @@ jobs:
             which pm2
             echo "-----------*****----------------"
             git pull origin main
-            /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin/npm ci
-            /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin/pm2 restart all
+            npm ci
+            pm2 restart all
