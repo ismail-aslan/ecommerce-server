@@ -30,10 +30,10 @@ jobs:
             cd ~/ecommerce-server
             echo "PATH: $PATH"
             echo "-----------*****----------------"
-            which yarn
+            ls -al /home/ubuntu/.nvm/versions/node
             echo "-----------*****----------------"
             which pm2
             echo "-----------*****----------------"
             git pull origin main
             /home/ubuntu/.nvm/versions/node/v18.16.1/bin/npm ci
-            pm2 restart all
+            /home/ubuntu/.yarn/bin/pm2 restart all
