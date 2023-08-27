@@ -35,5 +35,5 @@ jobs:
             which pm2
             echo "-----------*****----------------"
             git pull origin main
-            npm ci
+            /home/ubuntu/.nvm/versions/node/v18.16.1/bin/npm ci
             pm2 restart all
