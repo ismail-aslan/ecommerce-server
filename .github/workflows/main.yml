@@ -40,5 +40,6 @@ jobs:
           script: |
             cd ~/ecommerce-server
             git pull origin main
+            corepack enable
             yarn install
             pm2 restart all
