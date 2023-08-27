@@ -38,5 +38,5 @@ jobs:
             source ~/.nvm/nvm.sh  # Load NVM environment
             nvm use 16.20.2
             git pull origin main
-            npm ci
+            npm install
             pm2 restart all
