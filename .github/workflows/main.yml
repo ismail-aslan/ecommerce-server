@@ -18,12 +18,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install NVM
+        run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+      - name: Source NVM and Use Node.js ${{ matrix.node-version }}
         run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-      - name: Use Node.js ${{ matrix.node-version }}
-        run: nvm use ${{ matrix.node-version }}
+          nvm use ${{ matrix.node-version }}
       - name: SSH and deploy node app
         uses: appleboy/ssh-action@master
         with:
