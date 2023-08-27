@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -17,15 +17,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
-        env:
-          CI: true
 
-  deploy:
-    needs: [test]
-    runs-on: ubuntu-22.04
-
-    steps:
       - name: SSH and deploy node app
         uses: appleboy/ssh-action@master
         with:
