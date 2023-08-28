@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  testing:
     runs-on: ubuntu-20.04
     # strategy:
     #   matrix:
@@ -28,6 +28,11 @@ jobs:
       - name: simulate test
         run: echo "tasks are running"
 
+  deploying:
+    needs: testing
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
       - name: SSH and deploy node app
         uses: appleboy/ssh-action@master
         with:
