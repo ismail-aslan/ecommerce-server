@@ -6,8 +6,8 @@ module.exports = {
     description: "Ecommerce Website API",
     contact: {
       name: "İsmail Aslan",
-      email: "1aslan1ismail@gmail.com",
-      // url:""
+      email: "ismailaslan1097@gmail.com",
+      url: "ismailaslan.me",
     },
   },
 };
