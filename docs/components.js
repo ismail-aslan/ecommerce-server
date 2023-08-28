@@ -392,10 +392,7 @@ module.exports = {
         description: "No Content",
         content: {
           "application/json": {
-            example: {
-              status: "success",
-              data: null,
-            },
+            example: null,
           },
         },
       },

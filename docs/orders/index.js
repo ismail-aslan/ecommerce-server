@@ -91,37 +91,13 @@ module.exports = {
           },
         },
         400: {
-          description: "Bad Request: Invalid query parameters",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Invalid order_by query",
-              },
-            },
-          },
+          $ref: "#/components/responses/BadRequest",
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -169,37 +145,13 @@ module.exports = {
           },
         },
         400: {
-          description: "Bad Request: Invalid order ID",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Invalid order ID",
-              },
-            },
-          },
+          $ref: "#/components/responses/BadRequest",
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -235,37 +187,13 @@ module.exports = {
           },
         },
         400: {
-          description: "Bad Request: Invalid status",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Invalid status",
-              },
-            },
-          },
+          $ref: "#/components/responses/BadRequest",
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },

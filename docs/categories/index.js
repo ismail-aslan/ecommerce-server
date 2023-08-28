@@ -25,15 +25,7 @@ module.exports = {
           },
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -74,48 +66,16 @@ module.exports = {
           },
         },
         400: {
-          description: "Bad Request: Missing data",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing data",
-              },
-            },
-          },
+          $ref: "#/components/responses/BadRequest",
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         403: {
-          description: "Forbidden: User account is disabled or not allowed",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "You are not allowed to do that!",
-              },
-            },
-          },
+          $ref: "#/components/responses/Forbidden",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -161,48 +121,16 @@ module.exports = {
           },
         },
         400: {
-          description: "Bad Request: Missing or wrong parameters",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing or wrong parameters",
-              },
-            },
-          },
+          $ref: "#/components/responses/BadRequest",
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         403: {
-          description: "Forbidden: User account is disabled or not allowed",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "You are not allowed to do that!",
-              },
-            },
-          },
+          $ref: "#/components/responses/Forbidden",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -236,15 +164,7 @@ module.exports = {
           },
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -262,25 +182,10 @@ module.exports = {
       ],
       responses: {
         204: {
-          description: "Successfully deleted the category",
-          content: {
-            "application/json": {
-              example: {
-                status: "success",
-              },
-            },
-          },
+          $ref: "#/components/responses/NoContent",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },

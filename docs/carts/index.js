@@ -33,26 +33,10 @@ module.exports = {
           },
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -85,48 +69,16 @@ module.exports = {
           },
         },
         400: {
-          description: "Bad Request: Invalid product ID or product not listed",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Invalid product id",
-              },
-            },
-          },
+          $ref: "#/components/responses/BadRequest",
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         403: {
-          description: "Forbidden: User account is disabled",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Forbidden",
-              },
-            },
-          },
+          $ref: "#/components/responses/Forbidden",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -156,48 +108,16 @@ module.exports = {
           },
         },
         400: {
-          description: "Bad Request: Invalid product ID or product not in cart",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "This product is not in your cart",
-              },
-            },
-          },
+          $ref: "#/components/responses/BadRequest",
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         403: {
-          description: "Forbidden: User account is disabled",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Forbidden",
-              },
-            },
-          },
+          $ref: "#/components/responses/Forbidden",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },

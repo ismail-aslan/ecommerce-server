@@ -150,15 +150,7 @@ module.exports = {
           $ref: "#/components/responses/BadRequest",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "An internal server error occurred",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },

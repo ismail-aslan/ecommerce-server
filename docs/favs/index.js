@@ -30,26 +30,10 @@ module.exports = {
           },
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -81,26 +65,10 @@ module.exports = {
           },
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
@@ -130,26 +98,10 @@ module.exports = {
           },
         },
         401: {
-          description: "Unauthorized: Missing or invalid token",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Missing token",
-              },
-            },
-          },
+          $ref: "#/components/responses/Unauthorized",
         },
         500: {
-          description: "Internal Server Error",
-          content: {
-            "application/json": {
-              example: {
-                status: "error",
-                message: "Something went wrong!",
-              },
-            },
-          },
+          $ref: "#/components/responses/InternalServerError",
         },
       },
     },
