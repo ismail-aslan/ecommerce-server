@@ -46,6 +46,7 @@ jobs:
               npm ci  # Install project dependencies using package-lock.json
             fi
             pm2 restart all
+            npm prune -g --depth=0  # Remove unused globally installed packages
       - name: Cache npm dependencies
         if: steps.check_package_lock.outputs.changed == 'package-lock.json'
         uses: actions/cache@v2
