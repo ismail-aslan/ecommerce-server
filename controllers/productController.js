@@ -368,15 +368,16 @@ exports.updateProductById = catchAsync(async (req, res, next) => {
 
 const updateStripeProductImages = async (selectedProduct, images) => {
   await stripe.products.update(selectedProduct.stripeProductId, {
-    //! TODO
-    // images: images.map((el) => `${process.env.BASE_URL}uploads/${el}`),
-    images: images.map(
-      (_, idx) =>
-        [
-          `https://www.mountaingoatsoftware.com/uploads/blog/2016-09-06-what-is-a-product.png`,
-          `https://unctad.org/sites/default/files/inline-images/ccpb_workinggroup_productsafety_800x450.jpg`,
-        ][idx]
-    ),
+    images:
+      process.env.NODE_ENV === "production"
+        ? images.map((el) => `${process.env.BASE_URL}uploads/${el}`)
+        : images.map(
+            (_, idx) =>
+              [
+                `https://www.mountaingoatsoftware.com/uploads/blog/2016-09-06-what-is-a-product.png`,
+                `https://unctad.org/sites/default/files/inline-images/ccpb_workinggroup_productsafety_800x450.jpg`,
+              ][idx]
+          ),
   });
 };
 
