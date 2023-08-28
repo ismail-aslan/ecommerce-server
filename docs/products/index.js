@@ -305,7 +305,7 @@ module.exports = {
       },
     },
   },
-  "/products/{id}/image": {
+  "/products/{id}/images": {
     patch: {
       summary: "Update product image by ID",
       tags: ["Products"],
