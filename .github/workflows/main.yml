@@ -25,9 +25,6 @@ jobs:
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           nvm install 16.20.2
           nvm use 16.20.2
-      - name: Check if package-lock.json changed
-        id: check_package_lock
-        run: echo "::set-output name=changed::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep package-lock.json)"
       - name: SSH and deploy node app
         uses: appleboy/ssh-action@master
         with:
@@ -42,16 +39,16 @@ jobs:
             nvm use 16.20.2
             git pull origin main
             npm install -g pm2  # Install pm2 globally
-            if [[ "${{ steps.check_package_lock.outputs.changed }}" == "package-lock.json" ]]; then
-              npm ci  # Install project dependencies using package-lock.json
-            fi
+            npm ci  # Install project dependencies using package-lock.json
             pm2 restart all
-            npm prune -g --depth=0  # Remove unused globally installed packages
       - name: Cache npm dependencies
-        if: steps.check_package_lock.outputs.changed == 'package-lock.json'
         uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Cleanup
+        run: |
+          pm2 kill  # Stop all pm2 processes
+          pm2 unstartup  # Unset pm2 startup
