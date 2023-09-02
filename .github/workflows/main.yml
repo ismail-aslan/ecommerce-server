@@ -28,11 +28,10 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd ~/ecommerce-server
-            ls
+            ls -al
             source ~/.nvm/nvm.sh  # Load NVM environment
             nvm use 16.20.2
             git pull origin main
             npm install -g pm2  # Install pm2 globally
             npm install  # Install project dependencies
             pm2 restart ecommerce-api
-            pm2 logs --lines 1000
