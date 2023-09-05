@@ -1,28 +1,35 @@
 module.exports = {
   "/categories": {
     get: {
-      summary: "Get all categories",
+      summary: "Creates  Stripe checkout session",
       tags: ["Categories"],
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
+      parameters: [],
       responses: {
         200: {
-          description: "Successfully retrieved categories",
+          description:
+            "Successful response with checkout session url. You can try [STRIPE TEST CARDS](https://stripe.com/docs/testing?testing-method=card-numbers#cards).",
           content: {
             "application/json": {
               example: {
                 status: "success",
-                data: [
-                  {
-                    id: 1,
-                    name: "Electronics",
-                  },
-                  {
-                    id: 2,
-                    name: "Clothing",
-                  },
-                ],
+                data: "https://session_url",
               },
             },
           },
+        },
+        400: {
+          $ref: "#/components/responses/BadRequest",
+        },
+        401: {
+          $ref: "#/components/responses/Unauthorized",
+        },
+        403: {
+          $ref: "#/components/responses/Forbidden",
         },
         500: {
           $ref: "#/components/responses/InternalServerError",
