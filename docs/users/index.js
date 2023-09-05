@@ -2,7 +2,8 @@ module.exports = {
   "/users/register": {
     post: {
       tags: ["Users"],
-      summary: "Register a new user",
+      summary:
+        "Allows users to create new accounts with a valid email and secure password, granting access to our platform.",
       requestBody: {
         required: true,
         content: {
@@ -36,7 +37,8 @@ module.exports = {
   "/users/login": {
     post: {
       tags: ["Users"],
-      summary: "Log in user",
+      summary:
+        "Securely authenticates registered users with their email and password, granting access to their personalized profiles and platform features.",
       requestBody: {
         required: true,
         content: {
@@ -71,7 +73,8 @@ module.exports = {
   "/users/{verificationCode}": {
     get: {
       tags: ["Users"],
-      summary: "Verify user by verification code",
+      summary:
+        "User Verification via Verification Code: Upon successful verification, the user will be granted 'ADMIN' privileges for a limited duration of 2 hours.",
       parameters: [
         {
           in: "path",
@@ -109,7 +112,8 @@ module.exports = {
   "/users": {
     post: {
       tags: ["Users"],
-      summary: "Update user role and status",
+      summary:
+        "Enables administrators to update a user's role and status within the system, providing control over user permissions and account status management.",
       security: [
         {
           bearerAuth: [],
@@ -155,7 +159,8 @@ module.exports = {
   "/users/{userId}": {
     delete: {
       tags: ["Users"],
-      summary: "Delete user by ID",
+      summary:
+        "Allows administrators to delete a user's account based on their unique user ID, providing a means to manage user accounts within the system.",
       security: [
         {
           bearerAuth: [],

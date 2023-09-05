@@ -1,7 +1,8 @@
 module.exports = {
   "/products": {
     get: {
-      summary: "Get products",
+      summary:
+        "Retrieve a list of available products with advanced filtering and pagination options. Bearer authentication is required for specific query parameters.",
       tags: ["Products"],
       security: [
         {
@@ -155,7 +156,8 @@ module.exports = {
       },
     },
     post: {
-      summary: "Create product",
+      summary:
+        "Allows authenticated users to create new products by providing essential product details via a JSON request body.",
       tags: ["Products"],
       security: [
         {
@@ -222,7 +224,8 @@ module.exports = {
       },
     },
     patch: {
-      summary: "Update product",
+      summary:
+        "Enables authenticated users to update product information by providing a JSON request body with the necessary details.",
       tags: ["Products"],
       security: [
         {
@@ -299,7 +302,8 @@ module.exports = {
   },
   "/products/{id}/images": {
     patch: {
-      summary: "Update product image by ID",
+      summary:
+        "This endpoint allows authenticated users to update product images by providing the product ID and a multipart/form-data request containing arrays of unchanged and new product images (in PNG, JPG, or JPEG format).",
       tags: ["Products"],
       security: [
         {
@@ -395,13 +399,8 @@ module.exports = {
   },
   "/products/{id}": {
     get: {
-      summary: "Get product by ID",
+      summary: `Allows authenticated users to retrieve product details by specifying the product ID in the request path.`,
       tags: ["Products"],
-      security: [
-        {
-          bearerAuth: [],
-        },
-      ],
       parameters: [
         {
           name: "id",
@@ -458,7 +457,7 @@ module.exports = {
       },
     },
     delete: {
-      summary: "Delete product by ID",
+      summary: `Enables authenticated users to delete a product by specifying the product ID in the request path.`,
       tags: ["Products"],
       security: [
         {
@@ -497,7 +496,7 @@ module.exports = {
   },
   "/products/list/{id}": {
     get: {
-      summary: "List a product by ID",
+      summary: `Enables authenticated users to delete a product by specifying the product ID in the request path.`,
       tags: ["Products"],
       security: [
         {
@@ -541,7 +540,7 @@ module.exports = {
   },
   "/products/delist/{id}": {
     get: {
-      summary: "Delist a product by ID",
+      summary: `Allows authenticated users to delist a product by specifying the product ID in the request path.`,
       tags: ["Products"],
       security: [
         {

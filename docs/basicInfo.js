@@ -2,10 +2,12 @@ module.exports = {
   openapi: "3.1.0",
   info: {
     version: "1.0.0",
-    title: "Ecommerce Website",
-    description: "Ecommerce Website API",
+    title: "Ecommerce Website API",
+    description:
+      "Welcome to the Ecommerce Website API. This API empowers developers to interact with a variety of features, from managing products and categories to handling user carts and orders.",
+
     contact: {
-      name: "İsmail Aslan",
+      name: "Ismail Aslan",
       email: "ismailaslan1097@gmail.com",
       url: "ismailaslan.me",
     },

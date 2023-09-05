@@ -1,7 +1,7 @@
 module.exports = {
   "/categories": {
     get: {
-      summary: "Get all categories",
+      summary: `This "Categories" endpoint allows users to retrieve a list of all available categories.`,
       tags: ["Categories"],
       responses: {
         200: {
@@ -30,7 +30,7 @@ module.exports = {
       },
     },
     post: {
-      summary: "Create a new category",
+      summary: `Authenticated users can create a new category using this endpoint. `,
       tags: ["Categories"],
       security: [
         {
@@ -84,7 +84,7 @@ module.exports = {
       },
     },
     patch: {
-      summary: "Update a category by ID",
+      summary: `Authenticated users can update an existing category by specifying its ID in the request body.`,
       tags: ["Categories"],
       security: [
         {
@@ -145,7 +145,7 @@ module.exports = {
   },
   "/categories/{id}": {
     get: {
-      summary: "Get a category by ID",
+      summary: `Users can retrieve a specific category by specifying its ID in the request path.`,
       tags: ["Categories"],
       parameters: [
         {
@@ -177,7 +177,7 @@ module.exports = {
       },
     },
     delete: {
-      summary: "Delete a category by ID",
+      summary: `Authenticated users can delete a category by specifying its ID in the request path.`,
       tags: ["Categories"],
       security: [
         {

@@ -7,7 +7,7 @@ const {
 module.exports = {
   "/orders": {
     get: {
-      summary: "Get orders",
+      summary: `This endpoint allows authenticated users to retrieve a list of orders with advanced filtering and pagination options.`,
       tags: ["Orders"],
       security: [{ bearerAuth: [] }],
       parameters: [
@@ -61,32 +61,16 @@ module.exports = {
                     {
                       id: 1,
                       recieverName: "John Doe",
-                      status: "shipped",
-                      OrderItems: [
-                        {
-                          quantity: 2,
-                          Product: {
-                            id: 1,
-                            title: "Product A",
-                            images: ["image1.jpg", "image2.jpg"],
-                          },
-                        },
-                      ],
-                    },
-                    {
-                      id: 2,
-                      recieverName: "Jane Smith",
+                      addressLine1: "Lorem Ipsum",
+                      addressLine2: "-",
+                      city: "Ankara",
+                      state: "Ankara",
+                      country: "TR",
+                      postalCode: "06000",
                       status: "pending",
-                      OrderItems: [
-                        {
-                          quantity: 1,
-                          Product: {
-                            id: 2,
-                            title: "Product B",
-                            images: ["image3.jpg"],
-                          },
-                        },
-                      ],
+                      createdAt: "2023-09-05T17:01:21.373Z",
+                      updatedAt: "2023-09-05T17:01:21.373Z",
+                      userId: 1,
                     },
                   ],
                 },
@@ -108,7 +92,7 @@ module.exports = {
   },
   "/orders/{id}": {
     get: {
-      summary: "Get order by ID",
+      summary: `Authenticated users can retrieve a specific order by specifying its ID in the request path.`,
       tags: ["Orders"],
       parameters: [
         {
@@ -160,7 +144,7 @@ module.exports = {
       },
     },
     patch: {
-      summary: "Update order status by ID",
+      summary: `This endpoint enables authenticated users to update the status of a specific order by specifying its ID in the request path. `,
       tags: ["Orders"],
       parameters: [
         {

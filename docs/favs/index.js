@@ -1,7 +1,7 @@
 module.exports = {
   "/favs": {
     get: {
-      summary: "Get user's favorite products",
+      summary: `This "Favorites" endpoint allows authenticated users to retrieve their list of favorite products.`,
       tags: ["Favorites"],
       security: [{ bearerAuth: [] }],
       responses: {
@@ -40,7 +40,7 @@ module.exports = {
   },
   "/favs/{id}": {
     get: {
-      summary: "Add a product to user's favorites",
+      summary: `Users can add a product to their list of favorite products by specifying the product ID in the request path.`,
       tags: ["Favorites"],
       parameters: [
         {
@@ -73,7 +73,7 @@ module.exports = {
       },
     },
     delete: {
-      summary: "Remove a product from user's favorites",
+      summary: `This endpoint enables authenticated users to remove a product from their list of favorite products by specifying the product ID in the request path.`,
       tags: ["Favorites"],
       parameters: [
         {

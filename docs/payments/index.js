@@ -1,7 +1,7 @@
 module.exports = {
   "/payment": {
     get: {
-      summary: "Creates  Stripe checkout session",
+      summary: `This endpoint, categorized under "Payments," allows authenticated users to create a Stripe checkout session.`,
       tags: ["Payments"],
       security: [
         {
@@ -39,7 +39,7 @@ module.exports = {
   },
   "/payment/process-payment": {
     post: {
-      summary: "A webhook that listens stripe events",
+      summary: `This "Payments" endpoint is a webhook that listens to Stripe events.`,
       tags: ["Payments"],
 
       parameters: [
