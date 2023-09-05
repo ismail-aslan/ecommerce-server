@@ -3,7 +3,7 @@ module.exports = {
     get: {
       summary: "Get user's favorite products",
       tags: ["Favorites"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
           description: "Successfully retrieved favorite products",
@@ -51,7 +51,7 @@ module.exports = {
           description: "ID of the product to be added to favorites",
         },
       ],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
           description: "Successfully added the product to favorites",
@@ -84,7 +84,7 @@ module.exports = {
           description: "ID of the product to be removed from favorites",
         },
       ],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
           description: "Successfully removed the product from favorites",

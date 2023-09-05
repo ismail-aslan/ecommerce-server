@@ -32,7 +32,7 @@ module.exports = {
     post: {
       summary: "Create a new category",
       tags: ["Categories"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       requestBody: {
         required: true,
         content: {
@@ -82,7 +82,11 @@ module.exports = {
     patch: {
       summary: "Update a category by ID",
       tags: ["Categories"],
-      security: [{ BearerAuth: [] }],
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
       requestBody: {
         required: true,
         content: {

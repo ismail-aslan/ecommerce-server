@@ -5,7 +5,7 @@ module.exports = {
     get: {
       summary: "Get orders",
       tags: ["Orders"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       parameters: [
         {
           in: "query",
@@ -115,7 +115,7 @@ module.exports = {
           description: "ID of the order to retrieve",
         },
       ],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
           description: "Successfully retrieved order",
@@ -173,7 +173,7 @@ module.exports = {
           description: "New status for the order",
         },
       ],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
           description: "Successfully updated order status",

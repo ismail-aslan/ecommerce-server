@@ -3,7 +3,7 @@ module.exports = {
     get: {
       summary: "Get user's cart",
       tags: ["Cart"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
           description: "Successfully retrieved the user's cart",
@@ -46,7 +46,7 @@ module.exports = {
     get: {
       summary: "Add a product to the cart",
       tags: ["Cart"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       parameters: [
         {
           in: "path",
@@ -85,7 +85,7 @@ module.exports = {
     delete: {
       summary: "Remove a product from the cart",
       tags: ["Cart"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       parameters: [
         {
           in: "path",
