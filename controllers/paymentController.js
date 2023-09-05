@@ -21,8 +21,8 @@ const createStripeCheckoutSession = async (lineItems, cartIds) => {
     invoice_creation: {
       enabled: true,
     },
-    success_url: `${process.env.CLIENT_BASE_URL}/?success=true`,
-    cancel_url: `${process.env.CLIENT_BASE_URL}/?canceled=true`,
+    success_url: `${process.env.CLIENT_BASE_URL}?success=true`,
+    cancel_url: `${process.env.CLIENT_BASE_URL}?canceled=true`,
   });
 };
 
