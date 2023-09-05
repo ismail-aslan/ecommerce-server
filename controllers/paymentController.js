@@ -3,13 +3,14 @@ const catchAsync = require("./../utils/catchAsync");
 const { Product, Order, Cart, User, OrderItem } = require("../models");
 const { ecommercedb } = require("../models/db");
 const throwError = require("../utils/throwError");
+const { ALLOWED_COUNTRIES } = require("../constants");
 
 const createStripeCheckoutSession = async (lineItems, cartIds) => {
   const expirationTime = 60 * 30; // expires in 5 mins
   return await stripe.checkout.sessions.create({
     billing_address_collection: "auto",
     shipping_address_collection: {
-      allowed_countries: ["TR", "DE", "US"],
+      allowed_countries: ALLOWED_COUNTRIES,
     },
     line_items: lineItems,
     metadata: {

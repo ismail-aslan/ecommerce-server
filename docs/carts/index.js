@@ -1,9 +1,9 @@
 module.exports = {
   "/cart": {
     get: {
-      summary: "Get user's cart",
+      summary: `This "Cart" endpoint allows authenticated users to retrieve their shopping cart.`,
       tags: ["Cart"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       responses: {
         200: {
           description: "Successfully retrieved the user's cart",
@@ -44,9 +44,9 @@ module.exports = {
   },
   "/cart/{id}": {
     get: {
-      summary: "Add a product to the cart",
+      summary: `Authenticated users can add a product to their cart by specifying the product's ID in the request path.`,
       tags: ["Cart"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       parameters: [
         {
           in: "path",
@@ -83,9 +83,9 @@ module.exports = {
       },
     },
     delete: {
-      summary: "Remove a product from the cart",
+      summary: `Authenticated users can remove a product from their cart by specifying the product's ID in the request path.`,
       tags: ["Cart"],
-      security: [{ BearerAuth: [] }],
+      security: [{ bearerAuth: [] }],
       parameters: [
         {
           in: "path",

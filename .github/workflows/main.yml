@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: SSH and deploy node app
         uses: appleboy/ssh-action@master
+        env:
+          deneme: DENEME
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
@@ -33,4 +35,4 @@ jobs:
             git pull origin main
             npm install -g pm2  # Install pm2 globally
             npm install  # Install project dependencies
-            pm2 restart all
+            pm2 restart ${{ secrets.CONFIG_PATH }} --only ecommerce-api

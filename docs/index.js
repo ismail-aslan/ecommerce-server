@@ -8,11 +8,20 @@ const favs = require("./favs");
 const orders = require("./orders");
 const users = require("./users");
 const products = require("./products");
+const payments = require("./payments");
 
 module.exports = {
   ...basicInfo,
   ...servers,
   ...components,
   ...tags,
-  paths: { ...users, ...products, ...carts, ...categories, ...favs, ...orders },
+  paths: {
+    ...users,
+    ...products,
+    ...carts,
+    ...payments,
+    ...categories,
+    ...favs,
+    ...orders,
+  },
 };

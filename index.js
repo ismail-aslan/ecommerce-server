@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
-dotenv.config({ path: "./.config.env" });
+const path = require("path");
+dotenv.config({ path: path.join(__dirname, "./.config.env") });
 
 const { ecommercedb } = require("./models/db");
 
