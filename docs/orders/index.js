@@ -1,4 +1,4 @@
-const { VALID_LIMIT_VALUES } = require("../../constants");
+const { VALID_LIMIT_VALUES, ORDER_STATUS } = require("../../constants");
 
 module.exports = {
   "/orders": {
@@ -169,7 +169,7 @@ module.exports = {
         {
           in: "query",
           name: "status",
-          schema: { type: "string" },
+          schema: { type: "string", enum: ORDER_STATUS },
           description: "New status for the order",
         },
       ],
