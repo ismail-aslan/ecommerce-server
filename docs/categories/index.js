@@ -32,7 +32,11 @@ module.exports = {
     post: {
       summary: "Create a new category",
       tags: ["Categories"],
-      security: [{ bearerAuth: [] }],
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
       requestBody: {
         required: true,
         content: {
@@ -175,6 +179,11 @@ module.exports = {
     delete: {
       summary: "Delete a category by ID",
       tags: ["Categories"],
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
       parameters: [
         {
           in: "path",
