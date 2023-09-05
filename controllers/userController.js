@@ -158,7 +158,7 @@ exports.deleteUserById = catchAsync(async (req, res, next) => {
 
 exports.updateUserRoleAndStatus = catchAsync(async (req, res, next) => {
   const { role, email, status } = req.body;
-
+  const user = req.user;
   if (!email || !(role || status)) {
     throwError("Missing data", 400);
   }
@@ -169,6 +169,14 @@ exports.updateUserRoleAndStatus = catchAsync(async (req, res, next) => {
   if (status && !USER_STATUS.includes(status)) {
     throwError("Invalid status", 400);
   }
+
+  if (user.email !== "ismailaslan1097@gmail.com" && user.email !== email) {
+    throwError(
+      "Changing user roles or status is only allowed for your own account. Please contact support for assistance if needed.",
+      401
+    );
+  }
+
   const result = await User.update(
     {
       userRole: role,
