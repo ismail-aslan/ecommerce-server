@@ -105,7 +105,7 @@ module.exports = {
             },
             example: {
               id: 3,
-              name: "New Furniture Name",
+              name: "New Category Name",
             },
           },
         },

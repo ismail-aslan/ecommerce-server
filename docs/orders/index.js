@@ -1,4 +1,8 @@
-const { VALID_LIMIT_VALUES, ORDER_STATUS } = require("../../constants");
+const {
+  VALID_LIMIT_VALUES,
+  ORDER_STATUS,
+  ALLOWED_COUNTRIES,
+} = require("../../constants");
 
 module.exports = {
   "/orders": {
@@ -10,20 +14,20 @@ module.exports = {
         {
           in: "query",
           name: "country",
-          schema: { type: "string" },
+          schema: { type: "string", enum: ALLOWED_COUNTRIES },
           description: "Filter orders by country",
         },
         {
           in: "query",
           name: "status",
-          schema: { type: "string" },
+          schema: { type: "string", enum: ORDER_STATUS },
           description: "Filter orders by status",
         },
         {
           in: "query",
           name: "order_by",
-          schema: { type: "string" },
-          description: "Sort orders by a field (id, user)",
+          schema: { type: "string", enum: ["id", "user"] },
+          description: "Sort orders by a field ",
         },
         {
           in: "query",
