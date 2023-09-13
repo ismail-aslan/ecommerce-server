@@ -11,5 +11,6 @@ module.exports = {
     { name: "Orders" },
     { name: "Categories" },
     { name: "Favorites" },
+    { name: "Reviews" },
   ],
 };

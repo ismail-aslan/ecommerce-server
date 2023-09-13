@@ -1,7 +1,7 @@
 const multer = require("multer");
 const { Op } = require("sequelize");
 const { ecommercedb } = require("../models/db");
-const { Product, Category, User } = require("../models");
+const { Product, Category, User, Review } = require("../models");
 const catchAsync = require("./../utils/catchAsync");
 const multiUpload = require("../utils/multiUpload");
 const removeFile = require("../utils/removeFile");
@@ -89,23 +89,44 @@ exports.getProducts = catchAsync(async (req, res, next) => {
     where: {
       ...productQuery,
     },
-    order: [["id", "DESC"]],
-    include: {
-      model: Category,
-      ...categoryQuery,
-      attributes: ["id", "name"],
-      through: {
+    attributes: {
+      include: [
+        [ecommercedb.fn("AVG", ecommercedb.col("reviews.rating")), "avgRating"],
+        [ecommercedb.fn("COUNT", ecommercedb.col("reviews.id")), "reviewCount"],
+      ],
+    },
+    include: [
+      {
+        model: Review,
+        as: "reviews",
         attributes: [],
       },
-    },
-    distinct: true,
+      {
+        model: Category,
+        ...categoryQuery,
+        attributes: [],
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+    group: ["product.id"],
+    order: [["id", "DESC"]],
     limit,
     offset,
+    subQuery: false,
   });
 
   res.status(200).send({
     status: "success",
-    data: { count: products.count, products: products.rows },
+    data: {
+      products: products.rows,
+      pagination: {
+        limit: parseInt(limit),
+        offset: parseInt(offset),
+        total: products.count.length,
+      },
+    },
   });
 });
 
@@ -113,11 +134,6 @@ exports.getProductById = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   checkType(id, "number", false);
   const product = await Product.findByPk(id, {
-    attributes: {
-      include: [
-        [ecommercedb.fn("COUNT", ecommercedb.col("favorite.id")), "favCount"],
-      ],
-    },
     include: [
       {
         model: Category,
@@ -134,8 +150,19 @@ exports.getProductById = catchAsync(async (req, res, next) => {
           attributes: [],
         },
       },
+      {
+        model: Review,
+        attributes: [],
+      },
     ],
-    group: ["product.id", "categories.id"],
+    attributes: {
+      include: [
+        [ecommercedb.fn("COUNT", ecommercedb.col("favorite.id")), "favCount"],
+        [ecommercedb.fn("AVG", ecommercedb.col("reviews.rating")), "avgRating"],
+        [ecommercedb.fn("COUNT", ecommercedb.col("reviews.id")), "reviewCount"],
+      ],
+    },
+    group: ["product.id", "categories.id", "reviews.product_id"],
   });
 
   res.status(200).send({

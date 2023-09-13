@@ -4,6 +4,8 @@ const User = require("./user");
 const Cart = require("./cart");
 const Order = require("./order");
 const OrderItem = require("./orderItem");
+const Review = require("./review");
+const ReviewVote = require("./reviewVote");
 
 // table relationships
 Product.belongsToMany(Category, { through: "ProductCategory" });
@@ -31,4 +33,23 @@ OrderItem.belongsTo(Order);
 Product.hasMany(OrderItem);
 OrderItem.belongsTo(Product);
 
-module.exports = { Product, Category, User, Cart, Order, OrderItem };
+User.hasMany(Review);
+Review.belongsTo(User);
+Product.hasMany(Review);
+Review.belongsTo(Product);
+
+ReviewVote.belongsTo(User);
+User.hasMany(ReviewVote);
+ReviewVote.belongsTo(Review);
+Review.hasMany(ReviewVote);
+
+module.exports = {
+  Product,
+  Category,
+  User,
+  Cart,
+  Order,
+  OrderItem,
+  Review,
+  ReviewVote,
+};

@@ -9,6 +9,7 @@ const orders = require("./orders");
 const users = require("./users");
 const products = require("./products");
 const payments = require("./payments");
+const reviews = require("./reviews");
 
 module.exports = {
   ...basicInfo,
@@ -23,5 +24,6 @@ module.exports = {
     ...categories,
     ...favs,
     ...orders,
+    ...reviews,
   },
 };
