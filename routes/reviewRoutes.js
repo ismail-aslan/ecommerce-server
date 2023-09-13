@@ -5,12 +5,7 @@ const validateToken = require("../middleware/validateToken");
 const checkEmailVerification = require("../middleware/checkEmailVerification");
 
 router
-  .get(
-    "/:productId",
-    validateToken,
-    checkEmailVerification,
-    reviewController.getProductReviews
-  )
+  .get("/:productId", reviewController.getProductReviews)
   .get(
     "/can_add_review/:productId",
     validateToken,

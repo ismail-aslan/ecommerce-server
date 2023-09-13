@@ -41,9 +41,20 @@ const checkIfUserOrderedProduct = async (productId, userId) => {
 
 exports.getProductReviews = catchAsync(async (req, res) => {
   const { productId } = req.params;
-  const { limit = "20", offset = "0" } = req.query;
+  const {
+    limit = "20",
+    offset = "0",
+    order_by = "likeCount",
+    desc = true,
+  } = req.query;
 
   checkType(productId, "number", false);
+
+  if (
+    !["rating", "createdAt", "likeCount", "dislikeCount"].includes(order_by)
+  ) {
+    throwError(`Invalid 'order_by' query parameter.`, 400);
+  }
 
   if (!VALID_LIMIT_VALUES.includes(limit)) {
     throwError(`Invalid limit query`, 400);
@@ -80,6 +91,7 @@ exports.getProductReviews = catchAsync(async (req, res) => {
     },
     limit,
     offset,
+    order: [[order_by, desc ? "DESC" : "ASC"]],
   });
 
   res.status(200).send({
@@ -118,7 +130,7 @@ exports.createProductReview = catchAsync(async (req, res) => {
   const { rating, content, showFullName } = req.body;
 
   checkType(productId, "number", false);
-  checkType(rating, "number", false);
+  checkType(rating, "string", false);
   checkType(content, "string", true);
   checkType(showFullName, "boolean", false);
 
@@ -197,6 +209,10 @@ exports.updateProductReview = catchAsync(async (req, res) => {
   const { user } = req;
   const { rating, content, showFullName } = req.body;
 
+  checkType(rating, "string", true);
+  checkType(content, "string", true);
+  checkType(showFullName, "boolean", true);
+
   const selectedReview = await Review.findByPk(id, {
     include: {
       model: User,
@@ -216,18 +232,19 @@ exports.updateProductReview = catchAsync(async (req, res) => {
     throwError("You must provide at least one field to update", 400);
   }
 
+  if (REVIEW_RATINGS.includes(rating) === false) {
+    throwError("Rating must be between 1 and 5", 400);
+  }
+
   if (rating) {
-    checkType(rating, "number", false);
     selectedReview.rating = rating;
   }
 
   if (content) {
-    checkType(content, "string", true);
     selectedReview.content = content;
   }
 
   if (showFullName !== undefined) {
-    checkType(showFullName, "boolean", false);
     selectedReview.showFullName = showFullName;
   }
 
