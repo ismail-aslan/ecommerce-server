@@ -6,6 +6,7 @@ const favRoutes = require("./routes/favRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 api.use("/users", userRoutes);
 api.use("/products", productRoutes);
@@ -14,5 +15,6 @@ api.use("/favs", favRoutes);
 api.use("/cart", cartRoutes);
 api.use("/payment", paymentRoutes);
 api.use("/orders", orderRoutes);
+api.use("/reviews", reviewRoutes);
 
 module.exports = api;

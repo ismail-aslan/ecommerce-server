@@ -176,6 +176,32 @@ module.exports = {
         },
         required: ["title", "price", "description"],
       },
+      ReviewInput: {
+        type: "object",
+        properties: {
+          rating: {
+            type: "string",
+            description: "Rating for the product (1-5)",
+          },
+          content: {
+            type: "string",
+            description: "Review content",
+          },
+          showFullName: {
+            type: "boolean",
+            description: "Show full name in review",
+          },
+        },
+      },
+      ReviewVoteInput: {
+        type: "object",
+        properties: {
+          isLike: {
+            type: "boolean",
+            description: "Flag indicating whether the vote is like or dislike",
+          },
+        },
+      },
       Error: {
         type: "object",
         properties: {
