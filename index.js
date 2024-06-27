@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 8000;
 
 // setting up the express server
 const server = app.listen(PORT, () => {
-  console.log(`Server is awake on port ${PORT}`);
+  console.log(`Server is awake on port http://localhost:${PORT}`);
 });
 
 process.on("unhandledRejection", (err) => {
